@@ -78,10 +78,10 @@
             font-size: 15px;
         }
         .btn-primary:hover {
-            background: #0056b3;
+            background: black;
         }
         .btn-secondary {
-            background: #6c757d;
+            background: #d6d6d6;
             border: none;
             font-weight: bold;
             padding: 12px;
@@ -120,6 +120,41 @@
             line-height: 1.5; /* Adjust line height for better readability */
             border-radius: 4px; /* Optional: Adjust border radius */
         }
+
+        .tab-container {
+             display: flex;
+             flex-direction: column;
+             gap: 20px;
+             padding: 20px;
+         }
+         .tab {
+             overflow: hidden;
+             border: 1px solid #ccc;
+             background-color: #f1f1f1;
+         }
+         .tab button {
+             background-color: inherit;
+             float: left;
+             border: none;
+             outline: none;
+             cursor: pointer;
+             padding: 10px 20px;
+             transition: 0.3s;
+             background-color: #D3D3D3;
+         }
+         .tab button:hover {
+             background-color: #ddd;
+         }
+         .tab button.active {
+             background-color: black;
+             color:white;
+         }
+         .tabcontent {
+             display: none;
+             padding: 10px;
+             border: 1px solid #ccc;
+             border-top: none;
+         }
     </style>
 </head>
 <body>
@@ -174,7 +209,23 @@
         <label for="acsUrl" class="mt-3">ACS URL:</label>
         <input type="text" id="acsUrl" class="form-control" placeholder="Enter ACS URL">
         <div id="acsUrlError" class="alert alert-danger custom-alert mt-1" style="display: none; font:size= 12px"></div>
-        <br><br>
+        <label for="isVerifyCertificateRequired" class="mt-3">Is verify Certificate Enabled:</label>
+        <select id="isVerifyCertificateRequired" class="form-select">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+        </select>
+        <div id="certificateUploadSection" style="display: none;">
+            <label for="jksFile" class="mt-3">Upload Request Signing Certificate:</label>
+            <input type="file" id="jksFile" class="form-control" accept=".jks,.keystore">
+            <div id="jksFileError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+
+            <label for="jksPassword" class="mt-3">Keystore Password:</label>
+            <input type="password" id="jksPassword" class="form-control" placeholder="Enter keystore password">
+            <div id="jksPasswordError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+
+            <label for="jksAlias" class="mt-3">Certificate Alias (optional):</label>
+            <input type="text" id="jksAlias" class="form-control" placeholder="Enter certificate alias if known">
+        </div>
         <div class="d-flex gap-3 mt-3">
             <button class="btn btn-secondary flex-grow-1" onclick="resetForm()">Reset</button>
             <button class="btn btn-primary flex-grow-1" onclick="validateStep1()">Next</button>
@@ -185,10 +236,17 @@
     <div id="step2-content" class="step-content">
         <h5>Step 2: View and Send Saml Request</h5>
         <br>
-        <div>Saml Request ( Plain ) :</div>
-        <div id="plainSamlRequest" class="alert"></div>
-        <div>Saml Request ( Encoded )</div>
-        <div id="encodedSamlRequest" class="alert"></div>
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'viewPlainRequest')">Plain SAML Request</button>
+            <button class="tablinks" onclick="openTab(event, 'viewEncodedRequest')">Encoded SAML Request</button>
+        </div>
+
+        <div id="viewPlainRequest" class="tabcontent">
+            <div id="plainSamlRequest" class="alert"></div>
+        </div>
+         <div id="viewEncodedRequest" class="tabcontent">
+            <div id="encodedSamlRequest" class="alert"></div>
+         </div>
         <input type="hidden" id="SAMLRequest1" name="SAMLRequest" value="test"/>
         <input type="hidden" id="RelayState" name="RelayState" value="https://sp.example.com/acs"/>
         <div class="d-flex gap-3 mt-3">
@@ -252,6 +310,14 @@
         $("#samlTestTab").click();
     });
 
+    $("#isVerifyCertificateRequired").change(function() {
+        if ($(this).val() === "true") {
+            $("#certificateUploadSection").show();
+        } else {
+            $("#certificateUploadSection").hide();
+        }
+    }).trigger("change");
+
     function validateStep1() {
         // Clear previous error messages
         $("#tenantIdError").hide().text("");
@@ -281,6 +347,20 @@
             isValid = false;
         }
 
+        if ($("#isVerifyCertificateRequired").val() === "true") {
+                const jksFile = $("#jksFile").val();
+                if (!jksFile) {
+                    $("#jksFileError").text("JKS file is required when certificate verification is enabled.").show();
+                    isValid = false;
+                }
+
+                const jksPassword = $("#jksPassword").val();
+                if (!jksPassword) {
+                    $("#jksPasswordError").text("Keystore password is required.").show();
+                    isValid = false;
+                }
+         }
+
         // If all inputs are valid, proceed to Step 2
         if (isValid) {
             submitStep1();
@@ -288,22 +368,29 @@
     }
 
     function submitStep1() {
-        let data = {
-            tenantId: $("#tenantId").val(),
-            entityId: $("#entityId").val(),
-            acsUrl: $("#acsUrl").val()
-        };
+        let formData = new FormData();
+        formData.append("tenantId", $("#tenantId").val());
+        formData.append("entityId", $("#entityId").val());
+        formData.append("acsUrl", $("#acsUrl").val());
+        formData.append("isVerifyCertificateRequired", $("#isVerifyCertificateRequired").val());
+
+        if ($("#isVerifyCertificateRequired").val() === "true") {
+            formData.append("jksFile", $("#jksFile")[0].files[0]);
+            formData.append("jksPassword", $("#jksPassword").val());
+            formData.append("jksAlias", $("#jksAlias").val());
+        }
 
         // Simulated API response (Replace with actual API call)
         $.ajax({
             type: "POST",
             url: "/api/generate-saml-request",
-            contentType: "application/json",
-            data: JSON.stringify(data),
+            data: formData,
+            contentType: false,
+            processData: false,
             success: function(response) {
-                $("#encodedSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + response.encodedSamlRequest+ '</code></pre>');
+                $("#encodedSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + response.encodedSamlRequest + '</code></pre>');
                 var decodedString = atob(response.encodedSamlRequest);
-                $("#plainSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + prettyPrintXml(decodedString)+ '</code></pre>');
+                $("#plainSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + prettyPrintXml(decodedString) + '</code></pre>');
                 $("#SAMLRequest1").val(response.encodedSamlRequest);
                 showStep(2);
             },
@@ -382,9 +469,30 @@
         $("#SAMLRequest1").val(""); // Clear hidden SAML request input
         $("#RelayState").val("https://sp.example.com/acs"); // Reset RelayState (if needed)
 
+        $("#jksFile").val("");
+        $("#jksPassword").val("");
+        $("#jksAlias").val("");
+        $("#jksFileError").hide().text("");
+        $("#jksPasswordError").hide().text("");
+
         // Reset stepper to Step 1
         showStep(1);
     }
+
+     function openTab(evt, tabName) {
+               const tabcontent = document.getElementsByClassName("tabcontent");
+               for (let i = 0; i < tabcontent.length; i++) {
+                   tabcontent[i].style.display = "none";
+               }
+               const tablinks = document.getElementsByClassName("tablinks");
+               for (let i = 0; i < tablinks.length; i++) {
+                   tablinks[i].className = tablinks[i].className.replace(" active", "");
+               }
+               document.getElementById(tabName).style.display = "block";
+               evt.currentTarget.className += " active";
+           }
+           // Open the default tab
+       document.getElementsByClassName("tablinks")[0].click();
 </script>
 
 </body>

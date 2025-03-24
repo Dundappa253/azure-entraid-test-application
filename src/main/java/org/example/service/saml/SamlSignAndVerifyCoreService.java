@@ -1,6 +1,7 @@
 package org.example.service.saml;
 
 
+import org.example.model.SamlMetadataModel;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -61,12 +62,12 @@ public class SamlSignAndVerifyCoreService {
     @Value("${saml.certificate.keyAlias}")
     private String keyAlias;
 
-    public  Map<String,String> generateSignSamlRequest(String tenantId,String entityId,String acsUrl) {
+    public  Map<String,String> generateSignSamlRequest(SamlMetadataModel samlMetadataModel,KeyStore keyStore) {
         Map<String,String> samlRequestMap = new HashMap<>();
         try {
             InitializationService.initialize();
             // Create the SAML request
-            AuthnRequest authnRequest = createAuthnRequest(tenantId,entityId,acsUrl);
+            AuthnRequest authnRequest = createAuthnRequest(samlMetadataModel);
             // Load the private key and certificate
             PrivateKey privateKey = loadPrivateKey(keystorePath, keystorePassword, keyAlias, keyPassword);
             X509Certificate certificate = loadCertificate(keystorePath, keyPassword, keyAlias);
@@ -87,12 +88,14 @@ public class SamlSignAndVerifyCoreService {
             x509Data.getX509Certificates().add(x509Certificate);
             keyInfo.getX509Datas().add(x509Data);
 
-            signature.setKeyInfo(keyInfo);
-
-            authnRequest.setSignature(signature);
-
+            if(samlMetadataModel.isVerifyCertificateRequired()){
+                signature.setKeyInfo(keyInfo);
+                authnRequest.setSignature(signature);
+            }
             XMLObjectSupport.marshall(authnRequest);
-            Signer.signObject(signature);
+            if(samlMetadataModel.isVerifyCertificateRequired()){
+                Signer.signObject(signature);
+            }
 
             String encodedRequest = encodeSAMLRequest(authnRequest);
 
@@ -115,22 +118,22 @@ public class SamlSignAndVerifyCoreService {
         return samlRequestMap;
     }
 
-    private static AuthnRequest createAuthnRequest(String tenantId,String entityId,String acsUr) {
+    private static AuthnRequest createAuthnRequest(SamlMetadataModel samlMetadataModel) {
         AuthnRequest authnRequest = new AuthnRequestBuilder().buildObject();
         authnRequest.setID("_" + java.util.UUID.randomUUID().toString());
         authnRequest.setIssueInstant(Instant.now());
         authnRequest.setProtocolBinding("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST");
-        authnRequest.setAssertionConsumerServiceURL(acsUr);
+        authnRequest.setAssertionConsumerServiceURL(samlMetadataModel.getAcsUrl());
 
         Issuer issuer = new IssuerBuilder().buildObject();
-        issuer.setValue(entityId);
+        issuer.setValue(samlMetadataModel.getEntityId());
         authnRequest.setIssuer(issuer);
 
         NameIDPolicy nameIDPolicy = new NameIDPolicyBuilder().buildObject();
         nameIDPolicy.setAllowCreate(true);
         nameIDPolicy.setFormat("urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
         authnRequest.setNameIDPolicy(nameIDPolicy);
-        authnRequest.setDestination(String.format("https://login.microsoftonline.com/%s/saml2",tenantId));
+        authnRequest.setDestination(String.format("https://login.microsoftonline.com/%s/saml2",samlMetadataModel.getTenantId()));
         return authnRequest;
     }
 
