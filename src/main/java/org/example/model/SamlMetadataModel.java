@@ -1,10 +1,13 @@
 package org.example.model;
 
+import org.springframework.core.io.InputStreamSource;
+
 public class SamlMetadataModel {
     private String tenantId;
     private String entityId;
     private String acsUrl;
     private boolean verifyCertificateRequired;
+    private SigningCertificate signingCertificate;
 
     public SamlMetadataModel() {
     }
@@ -37,6 +40,10 @@ public class SamlMetadataModel {
         return this;
     }
 
+    public SamlMetadataModel signingCertificate(SigningCertificate signingCertificate) {
+        this.signingCertificate = signingCertificate;
+        return this;
+    }
     public SamlMetadataModel build() {
         return new SamlMetadataModel(tenantId, entityId, acsUrl, verifyCertificateRequired);
     }
@@ -61,5 +68,48 @@ public class SamlMetadataModel {
 
     public boolean isVerifyCertificateRequired() {
         return verifyCertificateRequired;
+    }
+
+    public SigningCertificate getSigningCertificate() {
+        return signingCertificate;
+    }
+
+    public static class SigningCertificate{
+        private InputStreamSource certificateData;
+        private String keyStorePassword;
+        private String keyPassword;
+        private String alias;
+
+        public InputStreamSource getCertificateData() {
+            return certificateData;
+        }
+
+        public void setCertificateData(InputStreamSource certificateData) {
+            this.certificateData = certificateData;
+        }
+
+        public String getKeyStorePassword() {
+            return keyStorePassword;
+        }
+
+        public void setKeyStorePassword(String keyStorePassword) {
+            this.keyStorePassword = keyStorePassword;
+        }
+
+        public String getKeyPassword() {
+            return keyPassword;
+        }
+
+        public void setKeyPassword(String keyPassword) {
+            this.keyPassword = keyPassword;
+        }
+
+        public String getAlias() {
+            return alias;
+        }
+
+        public void setAlias(String alias) {
+            this.alias = alias;
+        }
     }
 }

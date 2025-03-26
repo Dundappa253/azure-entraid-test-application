@@ -38,8 +38,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.security.KeyStore;
-import java.security.PrivateKey;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.util.Base64;
@@ -51,54 +51,24 @@ import java.util.zip.DeflaterOutputStream;
 @Service
 public class SamlSignAndVerifyCoreService {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-    @Value("${saml.certificate.path}")
-    private String keystorePath;
-    @Value("${saml.certificate.keystore-password}")
-    private String keystorePassword;
-    @Value("${saml.certificate.key-password}")
-    private String keyPassword;
-    @Value("${saml.certificate.keyAlias}")
-    private String keyAlias;
-
-    public  Map<String,String> generateSignSamlRequest(SamlMetadataModel samlMetadataModel,KeyStore keyStore) {
+    public  Map<String,String> generateSignSamlRequest(SamlMetadataModel samlMetadataModel) {
         Map<String,String> samlRequestMap = new HashMap<>();
         try {
             InitializationService.initialize();
             // Create the SAML request
             AuthnRequest authnRequest = createAuthnRequest(samlMetadataModel);
             // Load the private key and certificate
-            PrivateKey privateKey = loadPrivateKey(keystorePath, keystorePassword, keyAlias, keyPassword);
-            X509Certificate certificate = loadCertificate(keystorePath, keyPassword, keyAlias);
-            Credential credential = new BasicX509Credential(certificate, privateKey);
-
-            Signature signature = new SignatureBuilder().buildObject();
-            signature.setSigningCredential(credential);
-            signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
-            signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
-
-            // Add KeyInfo with the public certificate
-            KeyInfo keyInfo = new KeyInfoBuilder().buildObject();
-            X509Data x509Data = new X509DataBuilder().buildObject();
-            org.opensaml.xmlsec.signature.X509Certificate x509Certificate = new X509CertificateBuilder().buildObject();
-
-            // Set the certificate value
-            x509Certificate.setValue(Base64.getEncoder().encodeToString(certificate.getEncoded()));
-            x509Data.getX509Certificates().add(x509Certificate);
-            keyInfo.getX509Datas().add(x509Data);
-
-            if(samlMetadataModel.isVerifyCertificateRequired()){
-                signature.setKeyInfo(keyInfo);
-                authnRequest.setSignature(signature);
+            Signature signature = null;
+            if (samlMetadataModel.isVerifyCertificateRequired()
+                    && samlMetadataModel.getSigningCertificate().getCertificateData() != null) {
+                signature = getSignature(samlMetadataModel, authnRequest);
             }
             XMLObjectSupport.marshall(authnRequest);
+
             if(samlMetadataModel.isVerifyCertificateRequired()){
                 Signer.signObject(signature);
             }
-
             String encodedRequest = encodeSAMLRequest(authnRequest);
-
             Element element = XMLObjectSupport.marshall(authnRequest);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             TransformerFactory.newInstance().newTransformer()
@@ -109,7 +79,6 @@ public class SamlSignAndVerifyCoreService {
             String plainSamlRequest = Base64.getEncoder().encodeToString(xmlBytes);
             samlRequestMap.put("encodedSamlRequest",plainSamlRequest);
             System.out.println("SAML Request: " + encodedRequest);
-
           //  verify(authnRequest,certificate);
 
         } catch (Exception e) {
@@ -137,20 +106,34 @@ public class SamlSignAndVerifyCoreService {
         return authnRequest;
     }
 
-    public PrivateKey loadPrivateKey(String keystorePath, String keystorePassword, String alias, String keyPassword) throws Exception {
-        KeyStore keystore = KeyStore.getInstance("JKS");
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(keystorePath);
-        keystore.load(inputStream, keystorePassword.toCharArray());
-        return (PrivateKey) keystore.getKey(alias, keyPassword.toCharArray());
+    private static Signature getSignature(SamlMetadataModel samlMetadataModel, AuthnRequest authnRequest) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
+        Signature signature;
+        KeyInfo keyInfo = new KeyInfoBuilder().buildObject();
+        X509Data x509Data = new X509DataBuilder().buildObject();
+        org.opensaml.xmlsec.signature.X509Certificate x509Certificate = new X509CertificateBuilder().buildObject();
+
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(
+                samlMetadataModel.getSigningCertificate().getCertificateData().getInputStream(),
+                samlMetadataModel.getSigningCertificate().getKeyStorePassword().toCharArray()
+        );
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(samlMetadataModel.getSigningCertificate().getAlias(),
+                samlMetadataModel.getSigningCertificate().getKeyPassword().toCharArray());
+        X509Certificate certificate = (X509Certificate)keyStore.getCertificate(samlMetadataModel.getSigningCertificate().getAlias());
+        Credential credential = new BasicX509Credential(certificate, privateKey);
+        signature = new SignatureBuilder().buildObject();
+        signature.setSigningCredential(credential);
+        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+
+        x509Certificate.setValue(Base64.getEncoder().encodeToString(certificate.getEncoded()));
+        x509Data.getX509Certificates().add(x509Certificate);
+        keyInfo.getX509Datas().add(x509Data);
+        signature.setKeyInfo(keyInfo);
+        authnRequest.setSignature(signature);
+        return signature;
     }
 
-    public X509Certificate loadCertificate(String keystorePath, String keystorePassword, String alias) throws Exception {
-        KeyStore keystore = KeyStore.getInstance("JKS");
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(keystorePath);
-        keystore.load(inputStream, keystorePassword.toCharArray());
-
-        return (X509Certificate) keystore.getCertificate(alias);
-    }
 
     public static void verify(AuthnRequest authnRequest,X509Certificate certificate) {
         try {

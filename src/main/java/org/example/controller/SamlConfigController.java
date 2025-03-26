@@ -28,11 +28,20 @@ public class SamlConfigController {
                                                   @RequestParam(required = false) String jksPassword,
                                                   @RequestParam(required = false) String jksAlias) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
 
+
+
+        SamlMetadataModel.SigningCertificate signingCertificate = new SamlMetadataModel.SigningCertificate();
+        signingCertificate.setCertificateData(jksFile);
+        signingCertificate.setAlias(jksAlias);
+        signingCertificate.setKeyStorePassword(jksPassword);
+        signingCertificate.setKeyPassword(jksPassword);
+
         SamlMetadataModel samlMetadataModel = SamlMetadataModel.builder()
-                 .tenantId(tenantId)
+                .tenantId(tenantId)
                 .entityId(entityId)
                 .acsUrl(acsUrl)
-                .verifyCertificateRequired(isVerifyCertificateRequired);
+                .verifyCertificateRequired(isVerifyCertificateRequired)
+                .signingCertificate(signingCertificate);
 
         KeyStore keyStore = null;
         if (isVerifyCertificateRequired && jksFile != null && !jksFile.isEmpty()) {
@@ -40,6 +49,6 @@ public class SamlConfigController {
             keyStore.load(jksFile.getInputStream(), jksPassword.toCharArray());
         }
 
-        return samlSignAndVerifyCoreService.generateSignSamlRequest(samlMetadataModel,keyStore);
+        return samlSignAndVerifyCoreService.generateSignSamlRequest(samlMetadataModel);
     }
 }
