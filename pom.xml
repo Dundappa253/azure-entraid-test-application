@@ -110,6 +110,18 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.0</version>
+        </dependency>
+
         <!-- JSP API (Needed for JSTL) -->
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
