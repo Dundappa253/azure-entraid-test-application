@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Azure EntraID SAML Test Application 2</title>
+    <title>Azure EntraID SAML Test Application</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -155,48 +155,6 @@
              border: 1px solid #ccc;
              border-top: none;
          }
-
-         #tokenDisplay {
-             margin-top: 20px;
-             width: 100%;
-         }
-
-         .token-container {
-             margin-bottom: 20px;
-             background: #f8f9fa;
-             padding: 15px;
-             border-radius: 5px;
-             border: 1px solid #dee2e6;
-         }
-
-         .token-value {
-             word-wrap: break-word;
-             white-space: pre-wrap;
-             font-family: monospace;
-             background: white;
-             padding: 10px;
-             border-radius: 3px;
-             border: 1px solid #ced4da;
-             overflow-y: auto;
-         }
-
-         .token-container h4 {
-             margin-top: 0;
-             color: #495057;
-             font-size: 1.1rem;
-         }
-
-         .wrapText {
-             white-space: pre-wrap;
-             color: inherit !important;
-         }
-
-         th, td {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-            max-width: 300px; /* Adjust as needed */
-        }
     </style>
 </head>
 <body>
@@ -225,7 +183,88 @@
 <br>
 <div class="container mt-5">
     <div id="samlTest" class="tab-content">
+    <h2 class="mb-4 text-center">Azure EntraID SAML Test Application</h2>
+    <!-- Wider Stepper -->
+    <div class="stepper">
+        <div class="step active" id="step1-tab">Step 1: Saml Metadata</div>
+        <div class="step" id="step2-tab">Step 2: Saml Request</div>
+        <div class="step" id="step3-tab">Step 3: Saml Response</div>
     </div>
+    <!-- Step 1: Collect Inputs -->
+    <div id="step1-content" class="step-content active">
+        <h5>Step 1: Enter saml metadata</h5>
+        <br>
+        <label for="tenantId">Tenant ID:</label>
+        <select id="tenantId" class="form-select">
+            <option value="-1">Select Azure Tenant</option>
+            <option value="dba21c9c-dbbc-4b6a-9473-8e886854204f">My Tenant - dba21c9c-dbbc-4b6a-9473-8e886854204f
+            </option>
+        </select>
+        <div id="tenantIdError" class="alert alert-danger custom-alert mt-1"
+             style="display: none; font:size= 12px"></div>
+        <label for="entityId" class="mt-3">Entity ID:</label>
+        <input type="text" id="entityId" class="form-control" placeholder="Enter Entity ID">
+        <div id="entityIdError" class="alert alert-danger custom-alert mt-1"
+             style="display: none; font:size= 12px"></div>
+        <label for="acsUrl" class="mt-3">ACS URL:</label>
+        <input type="text" id="acsUrl" class="form-control" placeholder="Enter ACS URL">
+        <div id="acsUrlError" class="alert alert-danger custom-alert mt-1" style="display: none; font:size= 12px"></div>
+        <label for="isVerifyCertificateRequired" class="mt-3">Is verify Certificate Enabled:</label>
+        <select id="isVerifyCertificateRequired" class="form-select">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+        </select>
+        <div id="certificateUploadSection" style="display: none;">
+            <label for="jksFile" class="mt-3">Upload Request Signing Certificate:</label>
+            <input type="file" id="jksFile" class="form-control" accept=".jks,.keystore">
+            <div id="jksFileError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+
+            <label for="jksPassword" class="mt-3">Keystore Password:</label>
+            <input type="password" id="jksPassword" class="form-control" placeholder="Enter keystore password">
+            <div id="jksPasswordError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+
+            <label for="jksAlias" class="mt-3">Certificate Alias (optional):</label>
+            <input type="text" id="jksAlias" class="form-control" placeholder="Enter certificate alias if known">
+        </div>
+        <div class="d-flex gap-3 mt-3">
+            <button class="btn btn-secondary flex-grow-1" onclick="resetForm()">Reset</button>
+            <button class="btn btn-primary flex-grow-1" onclick="validateStep1()">Next</button>
+        </div>
+    </div>
+    <div id="step2-content" class="step-content">
+        <h5>Step 2: View and Send Saml Request</h5>
+        <br>
+        <div class="tab">
+            <button class="tablinks" onclick="openTab(event, 'viewPlainRequest')">Plain SAML Request</button>
+            <button class="tablinks" onclick="openTab(event, 'viewEncodedRequest')">Encoded SAML Request</button>
+        </div>
+
+        <div id="viewPlainRequest" class="tabcontent">
+            <div id="plainSamlRequest" class="alert"></div>
+        </div>
+         <div id="viewEncodedRequest" class="tabcontent">
+            <div id="encodedSamlRequest" class="alert"></div>
+         </div>
+        <input type="hidden" id="SAMLRequest1" name="SAMLRequest" value="test"/>
+        <input type="hidden" id="RelayState" name="RelayState" value="https://sp.example.com/acs"/>
+        <div class="d-flex gap-3 mt-3">
+            <button class="btn btn-secondary flex-grow-1" onclick="prevStep()">Previous</button>
+            <button class="btn btn-primary flex-grow-1" onclick="submitStep2()">Send Saml Request</button>
+        </div>
+    </div>
+    <div id="step3-content" class="step-content">
+        <h4 class="text-primary">Step 3: Saml Respone</h4>
+        <button class="btn btn-secondary mt-3" onclick="prevStep()">Previous</button>
+    </div>
+ </div>
+
+
+
+
+
+
+
+
 
     <!-- OAuth Test Content -->
     <div id="oauthTest" class="tab-content" style="display: none;">
@@ -247,9 +286,7 @@
                 <label for="oauthTenantId" class="form-label">Tenant ID:</label>
                 <select id="oauthTenantId" class="form-select">
                     <option value="-1">Select Azure Tenant</option>
-                    <option value="dba21c9c-dbbc-4b6a-9473-8e886854204f">My Tenant -
-                        dba21c9c-dbbc-4b6a-9473-8e886854204f
-                    </option>
+                    <option value="dba21c9c-dbbc-4b6a-9473-8e886854204f">My Tenant - dba21c9c-dbbc-4b6a-9473-8e886854204f</option>
                 </select>
                 <div id="oauthTenantIdError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
             </div>
@@ -257,8 +294,7 @@
             <!-- Rest of the configuration form remains the same -->
             <div class="mb-3">
                 <label for="clientId" class="form-label">Client ID:</label>
-                <input type="text" id="clientId" value="06b27541-b252-47cd-9898-6227cf5b1c77" class="form-control"
-                       placeholder="Enter Application (Client) ID">
+                <input type="text" id="clientId" class="form-control" placeholder="Enter Application (Client) ID">
                 <div id="clientIdError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
             </div>
 
@@ -335,8 +371,7 @@
 
             <div class="mb-3">
                 <label for="authCode" class="form-label">Authorization Code:</label>
-                <textarea id="authCode" class="form-control" rows="2"
-                          placeholder="Paste the authorization code"></textarea>
+                <textarea id="authCode" class="form-control" rows="2" placeholder="Paste the authorization code"></textarea>
                 <div id="authCodeError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
             </div>
 
@@ -353,99 +388,80 @@
 
         <!-- Step 3: Tokens -->
         <div id="oauthStep3-content" class="step-content">
-            <!--    <h5>Step 3: Tokens</h5>
-             <div class="mb-3">
-                  <label class="form-label">Token Details:</label>
-                  <pre id="tokenDetails" class="token-value"></pre>
-              </div> -->
-
-            <h5>Step 3: View OAuth Response</h5>
-            <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'idTokenResponse')">ID Token Claims</button>
-                <button class="tablinks" onclick="openTab(event, 'accessTokenResponse')">Access Token Claims</button>
-                <button class="tablinks" onclick="openTab(event, 'rawOAuthResponse')">Decoded ID Token</button>
-                <button class="tablinks" onclick="openTab(event, 'accessTokenOAuthResponse')">Decoded Access Token</button>
-                <button class="tablinks" onclick="openTab(event, 'rawTokenOAuthResponse')">Raw OAuth Response</button>
+            <h5>Step 3: Tokens</h5>
+            <br>
+            <div class="mb-3">
+                <label class="form-label">Access Token:</label>
+                <div class="oauth-token-container">
+                    <span id="accessToken"></span>
+                    <span class="copy-btn" onclick="copyToClipboard('accessToken')">Copy</span>
+                </div>
             </div>
 
-            <!-- Tab Content -->
-            <div id="idTokenResponse" class="tabcontent">
-               <table id="idTokenTable" class="table table-striped">
-                   <thead>
-                       <tr>
-                           <th>Claim Name</th>
-                           <th>Claim Value</th>
-                       </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
-               </table>
+            <div class="mb-3" id="refreshTokenContainer">
+                <label class="form-label">Refresh Token:</label>
+                <div class="oauth-token-container">
+                    <span id="refreshToken"></span>
+                    <span class="copy-btn" onclick="copyToClipboard('refreshToken')">Copy</span>
+                </div>
             </div>
-            <div id="accessTokenResponse" class="tabcontent">
-               <table id="accessTokenTable" class="table table-striped">
-                   <thead>
-                       <tr>
-                           <th>Claim Name</th>
-                           <th>Claim Value</th>
-                       </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
-               </table>
+
+            <div class="mb-3">
+                <label class="form-label">ID Token:</label>
+                <div class="oauth-token-container">
+                    <span id="idToken"></span>
+                    <span class="copy-btn" onclick="copyToClipboard('idToken')">Copy</span>
+                </div>
             </div>
-            <div id="rawOAuthResponse" class="tabcontent">
-                <pre id="rawIdTokenResponseId" class="token-value"></pre>
+
+            <div class="mb-3">
+                <label class="form-label">Token Details:</label>
+                <pre id="tokenDetails" class="oauth-token-container"></pre>
             </div>
-            <div id="accessTokenOAuthResponse" class="tabcontent">
-                <pre id="rawAccessTokenResponseId" class="token-value"></pre>
-            </div>
-            <div id="rawTokenOAuthResponse" class="tabcontent">
-                <pre id="rawTokenOAuthResponseId" class="token-value"></pre>
+
+            <div class="d-flex gap-3">
+                <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
+                <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
+                <button class="btn btn-info flex-grow-1" id="refreshTokenBtn" onclick="refreshTokens()" style="display: none;">Refresh Token</button>
             </div>
         </div>
-        <div class="d-flex gap-3">
-            <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
-            <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
-            <button class="btn btn-info flex-grow-1" id="refreshTokenBtn" onclick="refreshTokens()"
-                    style="display: none;">Refresh Token
-            </button>
-        </div>
-    </div>
 
+        <!-- Step 4: API Test -->
+        <div id="oauthStep4-content" class="step-content">
+            <h5>Step 4: API Test</h5>
+            <br>
+            <div class="mb-3">
+                <label for="apiEndpoint" class="form-label">API Endpoint:</label>
+                <input type="text" id="apiEndpoint" class="form-control" value="https://graph.microsoft.com/v1.0/me">
+            </div>
 
-    <!-- Step 4: API Test -->
-    <div id="oauthStep4-content" class="step-content">
-        <h5>Step 4: API Test</h5>
-        <br>
-        <div class="mb-3">
-            <label for="apiEndpoint" class="form-label">API Endpoint:</label>
-            <input type="text" id="apiEndpoint" class="form-control" value="https://graph.microsoft.com/v1.0/me">
-        </div>
+            <div class="mb-3">
+                <label class="form-label">API Response:</label>
+                <pre id="apiResponse" class="oauth-token-container"></pre>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">API Response:</label>
-            <pre id="apiResponse" class="oauth-token-container"></pre>
-        </div>
-
-        <div class="d-flex gap-3">
-            <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(3)">Previous</button>
-            <button class="btn btn-primary flex-grow-1" onclick="callApi()">Call API</button>
+            <div class="d-flex gap-3">
+                <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(3)">Previous</button>
+                <button class="btn btn-primary flex-grow-1" onclick="callApi()">Call API</button>
+            </div>
         </div>
     </div>
-</div>
 
 
-<!-- Documentation Content -->
-<div id="documentation" class="tab-content" style="display: none;">
-    <h2 class="mb-4 text-center">Azure EntraID Test - Documentation</h2>
-    <p>Welcome to the documentation section.</p>
-    <p>Here you can provide detailed information about SAML and OAuth integration.</p>
-    <ul>
-        <li><a href="#">SAML Documentation</a></li>
-        <li><a href="#">OAuth Documentation</a></li>
-        <li><a href="#">API Reference</a></li>
-    </ul>
-</div>
+
+
+
+    <!-- Documentation Content -->
+    <div id="documentation" class="tab-content" style="display: none;">
+       <h2 class="mb-4 text-center">Azure EntraID Test - Documentation</h2>
+        <p>Welcome to the documentation section.</p>
+        <p>Here you can provide detailed information about SAML and OAuth integration.</p>
+        <ul>
+            <li><a href="#">SAML Documentation</a></li>
+            <li><a href="#">OAuth Documentation</a></li>
+            <li><a href="#">API Reference</a></li>
+        </ul>
+    </div>
 </div>
 <footer class="bg-dark text-white text-center py-1 fixed-bottom" style="font-size:12px">
     <div class="sb-0">&copy; 2025 SAML and OAuth Testing. All rights reserved.</div>
@@ -475,7 +491,7 @@
             const target = $(this).attr("href");
             $(target).show();
         });
-        $("#oauthTestTab").click();
+        $("#samlTestTab").click();
 
 
          $("#redirectUri").val(window.location.origin + window.location.pathname);
@@ -670,6 +686,28 @@
         $("#step" + step + "-tab").addClass("active");
     }
 
+    function resetForm() {
+        // Reset input fields
+        $("#tenantId").val("-1"); // Reset to default option
+        $("#entityId").val(""); // Clear Entity ID
+        $("#acsUrl").val(""); // Clear ACS URL
+
+        // Reset Step 2 and Step 3 content (if needed)
+        $("#plainSamlRequest").html(""); // Clear plain SAML request
+        $("#encodedSamlRequest").html(""); // Clear encoded SAML request
+        $("#SAMLRequest1").val(""); // Clear hidden SAML request input
+        $("#RelayState").val("https://sp.example.com/acs"); // Reset RelayState (if needed)
+
+        $("#jksFile").val("");
+        $("#jksPassword").val("");
+        $("#jksAlias").val("");
+        $("#jksFileError").hide().text("");
+        $("#jksPasswordError").hide().text("");
+
+        // Reset stepper to Step 1
+        showStep(1);
+    }
+
      function openTab(evt, tabName) {
                const tabcontent = document.getElementsByClassName("tabcontent");
                for (let i = 0; i < tabcontent.length; i++) {
@@ -684,6 +722,16 @@
            }
            // Open the default tab
        document.getElementsByClassName("tablinks")[0].click();
+
+
+
+
+
+
+
+
+
+
 
 
      async function generateAuthUrl() {
@@ -766,14 +814,17 @@
      }
 
     function startAuthFlow() {
+        console.log('11111111111')
         // Validate inputs first
       //  if (!validateOAuthStep1()) {
+     //     console.log('222222')
       //      return;
       //  }
 
         // Show loading state
         $("#authFlowContainer").show();
         $("#authUrl").closest('.mb-3').hide();
+        console.log('3333333')
         // Store current form state in sessionStorage
         const formState = {
             tenantId: $("#oauthTenantId").val(),
@@ -781,7 +832,9 @@
             redirectUri: $("#redirectUri").val(),
             scopes: getSelectedScopes()
         };
+        console.log('44444444')
         sessionStorage.setItem('oauthFormState', JSON.stringify(formState));
+        console.log('5555550'+$("#authUrl").val());
 
         // Redirect to Microsoft login
         window.location.href = $("#authUrl").val();
@@ -820,59 +873,84 @@
     }
 
     function getTokens() {
-        const authCode = $("#authCode").val().trim();
-        if (!authCode) {
-            $("#authCodeError").text("Authorization code is required").show();
-            return;
-        }
+         const authCode = $("#authCode").val().trim();
+          if (!authCode) {
+                $("#authCodeError").text("Authorization code is required").show();
+                return;
+          }
 
-        const tenantId = $("#oauthTenantId").val();
-        const clientId = $("#clientId").val();
-        const redirectUri = $("#redirectUri").val();
-        const codeVerifier = sessionStorage.getItem('code_verifier');
+          const tenantId = $("#oauthTenantId").val();
+          const clientId = $("#clientId").val();
+          const redirectUri = $("#redirectUri").val();
+          const codeVerifier = sessionStorage.getItem('code_verifier');
 
-        // Clear previous errors
-        $("#authCodeError").hide().text("");
+            // Clear previous errors
+          $("#authCodeError").hide().text("");
 
-        // Build token request
-        const tokenUrl =  "https://login.microsoftonline.com/"+$("#oauthTenantId").val()+"/oauth2/v2.0/token";
+            // Build token request
+          const tokenUrl = "https://login.microsoftonline.com/"+$("#oauthTenantId").val()+"/oauth2/v2.0/token";
 
-        const formData = new URLSearchParams();
-        formData.append("client_id", clientId);
-        formData.append("scope", "openid profile email offline_access");
-        formData.append("code", authCode);
-        formData.append("redirect_uri", redirectUri);
-        formData.append("grant_type", "authorization_code");
-        formData.append("code_verifier", codeVerifier);
+          const formData = new URLSearchParams();
+          formData.append("client_id", clientId);
+          formData.append("scope", "openid profile email offline_access");
+          formData.append("code", authCode);
+          formData.append("redirect_uri", redirectUri);
+          formData.append("grant_type", "authorization_code");
+          formData.append("code_verifier", codeVerifier);
 
-        // Show loading state
-        $("#accessToken").text("Requesting tokens...");
-        $("#refreshToken").text("");
-        $("#idToken").text("");
-        $("#tokenDetails").text("");
+            // Show loading state
+          $("#accessToken").text("Requesting tokens...");
+          $("#refreshToken").text("");
+          $("#idToken").text("");
+          $("#tokenDetails").text("");
 
-        // Make AJAX call to token endpoint
-        $.ajax({
-            type: "POST",
-            url: tokenUrl,
-            data: formData.toString(),
-            contentType: "application/x-www-form-urlencoded",
-            success: function(tokenResponse) {
-                // Send the entire token response to the backend
-                callBackendAPI(tokenResponse);
-            },
-            error: function(xhr) {
-                let errorMessage = "Error getting tokens";
-                try {
-                    const errorResponse = JSON.parse(xhr.responseText);
-                    errorMessage += `: ${errorResponse.error} - ${errorResponse.error_description}`;
-                } catch (e) {
-                    errorMessage += `: ${xhr.statusText}`;
+            // Make real AJAX call to token endpoint
+          $.ajax({
+                type: "POST",
+                url: tokenUrl,
+                data: formData.toString(),
+                contentType: "application/x-www-form-urlencoded",
+                success: function(response) {
+                    // Display tokens
+                    $("#accessToken").text(response.access_token);
+
+                    if (response.refresh_token) {
+                        $("#refreshToken").text(response.refresh_token);
+                        $("#refreshTokenBtn").show();
+                        $("#refreshTokenContainer").show();
+                    } else {
+                        $("#refreshToken").text("No refresh token received");
+                        $("#refreshTokenBtn").hide();
+                        $("#refreshTokenContainer").show();
+                    }
+
+                    $("#idToken").text(response.id_token || "No ID token received");
+
+                    // Pretty print token details
+                    $("#tokenDetails").text(JSON.stringify(response, null, 2));
+
+                    // Show token step
+                    showOAuthStep(3);
+
+                    // Clear URL parameters
+                    if (window.history.replaceState) {
+                        const cleanUrl = window.location.origin + window.location.pathname;
+                        window.history.replaceState({}, document.title, cleanUrl);
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = "Error getting tokens";
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        errorMessage += `: ${errorResponse.error} - ${errorResponse.error_description}`;
+                    } catch (e) {
+                        errorMessage += `: ${xhr.statusText}`;
+                    }
+
+                    $("#accessToken").text(errorMessage);
+                    console.error("Token request failed:", xhr);
                 }
-                $("#accessToken").text(errorMessage);
-                console.error("Token request failed:", xhr);
-            }
-        });
+         });
     }
 
     function refreshTokens() {
@@ -899,30 +977,7 @@
             formData.append("client_secret", clientSecret);
         }
 
-        // Simulated refresh response
-        const simulatedResponse = {
-            access_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1uQ19WWmNBVGZNNXBP...NEW",
-            refresh_token: "OAQABAAAAAABHh4kmS_aKT5Ksj3R4...NEW",
-            id_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1uQ19WWmNBVGZNNXBP...NEW",
-            expires_in: 3599,
-            token_type: "Bearer"
-        };
-
-        // Update displayed tokens
-        $("#accessToken").text(simulatedResponse.access_token);
-        $("#refreshToken").text(simulatedResponse.refresh_token);
-        $("#idToken").text(simulatedResponse.id_token);
-        $("#tokenDetails").text(JSON.stringify(simulatedResponse, null, 2));
-
         alert("Tokens refreshed successfully");
-    }
-
-    function renderTable(attributes,tokeTable) {
-        let rows = "";
-        attributes.forEach(item => {
-             rows += "<tr><td>"+item.name+"</td><td style='white-space'>"+item.value+"</td></tr>";
-        });
-        $(tokeTable).html(rows || '<tr><td colspan="2">No data</td></tr>');
     }
 
     function generateRandomString(length) {
@@ -949,6 +1004,47 @@
             .replace(/=/g, '')
             .replace(/\+/g, '-')
             .replace(/\//g, '_');
+    }
+
+
+    function testApiWithToken() {
+        const accessToken = $("#accessToken").text();
+        if (!accessToken) {
+            alert("No access token available");
+            return;
+        }
+
+        // Display API response
+        $("#apiEndpoint").val("https://graph.microsoft.com/v1.0/me");
+        $("#apiResponse").text(JSON.stringify(simulatedResponse, null, 2));
+
+        // Show API test step
+        $("#oauthStep4").show();
+    }
+
+    function callApi() {
+        const apiEndpoint = $("#apiEndpoint").val();
+        if (!apiEndpoint) {
+            alert("Please enter an API endpoint");
+            return;
+        }
+
+        // In a real app, you would make the API call here
+        // For demo, we'll just show the same simulated response
+        testApiWithToken();
+    }
+
+    function copyToClipboard(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.tagName === 'INPUT' || element.tagName === 'TEXTAREA'
+            ? element.value
+            : element.innerText;
+
+        navigator.clipboard.writeText(text).then(function() {
+            alert("Copied to clipboard!");
+        }, function() {
+            alert("Failed to copy text");
+        });
     }
 
     function showOAuthStep(step) {
@@ -1012,55 +1108,8 @@
 
         // Proceed to get tokens
         getTokens();
-
         // Show token step (will be shown again after tokens are received)
         showOAuthStep(3);
-    }
-
- // NEW: Function to send tokens to backend and handle response
-    function callBackendAPI(tokenResponse) {
-        // Show loading state
-        $("#apiResponse").text("Sending tokens to backend...");
-        $("#apiResponseContainer").show();
-
-        // Replace with your actual backend endpoint
-        const backendApiUrl = "http://localhost:8080/api/decode-oauth-token";
-
-        $.ajax({
-            type: "POST",  // Typically POST for token submission
-            url: backendApiUrl,
-            contentType: "application/json",
-            data: JSON.stringify(tokenResponse),
-            success: function(backendResponse) {
-                 // Display tokens only after backend confirms
-                 console.log('backendResponse'+JSON.stringify(backendResponse));
-                 $("#rawIdTokenResponseId").text(backendResponse.decodedIdToken)
-                 $("#rawAccessTokenResponseId").text(backendResponse.decodedAccessToken)
-                 $("#rawTokenOAuthResponseId").text(JSON.stringify(tokenResponse))
-
-                renderTable(backendResponse.idTokenClaimList,'#idTokenTable tbody')
-                renderTable(backendResponse.accessTokenClaimList,'#accessTokenTable tbody')
-                // Only now show Step 3 (after backend success)
-                showOAuthStep(3);
-
-                // Clear URL parameters
-                if (window.history.replaceState) {
-                    const cleanUrl = window.location.origin + window.location.pathname;
-                    window.history.replaceState({}, document.title, cleanUrl);
-                }
-            },
-            error: function(xhr) {
-                $("#accessToken").text("Backend validation failed");
-                let errorMessage = "Backend Error";
-                try {
-                    errorMessage += `: ${JSON.parse(xhr.responseText).error || xhr.statusText}`;
-                } catch (e) {
-                    errorMessage += `: ${xhr.statusText}`;
-                }
-                $("#apiResponse").text(errorMessage);
-                console.error("Backend API call failed:", xhr);
-            }
-        });
     }
 
     // Reset OAuth Form
@@ -1094,67 +1143,6 @@
                 window.history.replaceState({}, document.title, cleanUrl);
         }
     }
-
-    function copyToClipboard(elementId) {
-        const element = document.getElementById(elementId);
-        const text = element.tagName === 'INPUT' || element.tagName === 'TEXTAREA'
-            ? element.value
-            : element.innerText;
-
-        navigator.clipboard.writeText(text).then(function() {
-            alert("Copied to clipboard!");
-        }, function() {
-            alert("Failed to copy text");
-        });
-    }
-
-    function testApiWithToken() {
-            const accessToken = $("#accessToken").text();
-            if (!accessToken) {
-                alert("No access token available");
-                return;
-            }
-
-            // For demo, we'll simulate an API call to Microsoft Graph
-            // In a real app, you would make an AJAX call to your backend
-            // which would then call the API with the token
-
-            // Simulated API response
-            const simulatedResponse = {
-                "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users/$entity",
-                "businessPhones": [],
-                "displayName": "Adele Vance",
-                "givenName": "Adele",
-                "jobTitle": "Retail Manager",
-                "mail": "AdeleV@contoso.com",
-                "mobilePhone": null,
-                "officeLocation": "18/2111",
-                "preferredLanguage": "en-US",
-                "surname": "Vance",
-                "userPrincipalName": "AdeleV@contoso.com",
-                "id": "87d349ed-44d7-43e1-9a83-5f2406dee5bd"
-            };
-
-            // Display API response
-            $("#apiEndpoint").val("https://graph.microsoft.com/v1.0/me");
-            $("#apiResponse").text(JSON.stringify(simulatedResponse, null, 2));
-
-            // Show API test step
-            $("#oauthStep4").show();
-        }
-
-        function callApi() {
-            const apiEndpoint = $("#apiEndpoint").val();
-            if (!apiEndpoint) {
-                alert("Please enter an API endpoint");
-                return;
-            }
-
-            // In a real app, you would make the API call here
-            // For demo, we'll just show the same simulated response
-            testApiWithToken();
-        }
-
 </script>
 
 </body>
