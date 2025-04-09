@@ -175,32 +175,7 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">SAML and OAuth Testing</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-         <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="samlTestTab" href="#samlTest">Test SAML</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="oauthTestTab" href="#oauthTest">Test OAuth</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="documentationTab" href="#documentation">Documentation</a>
-                        </li>
-                    </ul>
-            </div>
-        </div>
-    </div>
-</nav>
-<br>
-
-
+<%@ include file="header.jsp" %>
 <div class="container mt-5">
     <div id="samlTestTab" class="tab-content">
     <h2 class="mb-4 text-center">Azure EntraID SAML Test Application</h2>
@@ -277,39 +252,22 @@
         </div>
     </div>
   </div>
-    <!-- OAuth Test Content -->
-    <div id="oauthTest" class="tab-content" style="display: none;">
-        <h2 class="mb-4 text-center">Azure EntraID OAuth Test Application</h2>
-        <p>This section is for testing OAuth functionality.</p>
-        <p>You can add forms, buttons, and other elements here to test OAuth flows.</p>
-    </div>
-
     <!-- Documentation Content -->
     <div id="documentation" class="tab-content" style="display: none;">
-       <h2 class="mb-4 text-center">Azure EntraID Test - Documentation</h2>
-        <p>Welcome to the documentation section.</p>
-        <p>Here you can provide detailed information about SAML and OAuth integration.</p>
-        <ul>
-            <li><a href="#">SAML Documentation</a></li>
-            <li><a href="#">OAuth Documentation</a></li>
-            <li><a href="#">API Reference</a></li>
-        </ul>
+       <%@ include file="documentation.jsp" %>
     </div>
 </div>
-<footer class="bg-dark text-white text-center py-1 fixed-bottom" style="font-size:12px">
-    <div class="sb-0">&copy; 2025 SAML and OAuth Testing. All rights reserved.</div>
-    <div class="mb-0">Contact: <a href="mailto:aacm-support@ubs.com" class="text-white">aacm-support@ubs.com</a></div>
-</footer>
+<%@ include file="footer.jsp" %>
 <script>
  $(document).ready(function() {
-           $(".nav-link").on("click", function(e) {
+     /*      $(".nav-link").on("click", function(e) {
              e.preventDefault(); // Prevent default anchor behavior
              $(".nav-link").removeClass("active");
              $(this).addClass("active");
              $(".tab-content").hide();
              const target = $(this).attr("href");
              $(target).show();
-         });
+         });  */
          $("#samlTest").click();
      });
 

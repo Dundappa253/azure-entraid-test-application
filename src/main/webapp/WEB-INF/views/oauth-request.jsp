@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Azure EntraID SAML Test Application</title>
+    <title>Azure EntraID SAML Test Application 2</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -155,120 +155,72 @@
              border: 1px solid #ccc;
              border-top: none;
          }
+
+         #tokenDisplay {
+             margin-top: 20px;
+             width: 100%;
+         }
+
+         .token-container {
+             margin-bottom: 20px;
+             background: #f8f9fa;
+             padding: 15px;
+             border-radius: 5px;
+             border: 1px solid #dee2e6;
+         }
+
+         .token-value {
+             word-wrap: break-word;
+             white-space: pre-wrap;
+             font-family: monospace;
+             background: white;
+             padding: 10px;
+             border-radius: 3px;
+             border: 1px solid #ced4da;
+             overflow-y: auto;
+         }
+
+         .token-container h4 {
+             margin-top: 0;
+             color: #495057;
+             font-size: 1.1rem;
+         }
+
+         .wrapText {
+             white-space: pre-wrap;
+             color: inherit !important;
+         }
+
+         th, td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            max-width: 300px; /* Adjust as needed */
+        }
+
+        body {
+                    background: linear-gradient(white, #e3f2fd, white);
+                    font-family: 'Poppins', sans-serif;
+                    padding-bottom: 60px;
+                }
+                .container {
+                    max-width: 1200px !important;
+                    background: white;
+                    padding: 25px;
+                    border-radius: 10px;
+                    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+                }
+                h2 {
+                    font-weight: bold;
+                    color: black;
+                    font-size: 22px;
+                }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">SAML and OAuth Testing</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" id="samlTestTab" href="#samlTest">Test SAML</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="oauthTestTab" href="#oauthTest">Test OAuth</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="documentationTab" href="#documentation">Documentation</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-<br>
-<div class="container mt-5">
-    <div id="samlTest" class="tab-content">
-    <h2 class="mb-4 text-center">Azure EntraID SAML Test Application</h2>
-    <!-- Wider Stepper -->
-    <div class="stepper">
-        <div class="step active" id="step1-tab">Step 1: Saml Metadata</div>
-        <div class="step" id="step2-tab">Step 2: Saml Request</div>
-        <div class="step" id="step3-tab">Step 3: Saml Response</div>
-    </div>
-    <!-- Step 1: Collect Inputs -->
-    <div id="step1-content" class="step-content active">
-        <h5>Step 1: Enter saml metadata</h5>
-        <br>
-        <label for="tenantId">Tenant ID:</label>
-        <select id="tenantId" class="form-select">
-            <option value="-1">Select Azure Tenant</option>
-            <option value="dba21c9c-dbbc-4b6a-9473-8e886854204f">My Tenant - dba21c9c-dbbc-4b6a-9473-8e886854204f
-            </option>
-        </select>
-        <div id="tenantIdError" class="alert alert-danger custom-alert mt-1"
-             style="display: none; font:size= 12px"></div>
-        <label for="entityId" class="mt-3">Entity ID:</label>
-        <input type="text" id="entityId" class="form-control" placeholder="Enter Entity ID">
-        <div id="entityIdError" class="alert alert-danger custom-alert mt-1"
-             style="display: none; font:size= 12px"></div>
-        <label for="acsUrl" class="mt-3">ACS URL:</label>
-        <input type="text" id="acsUrl" class="form-control" placeholder="Enter ACS URL">
-        <div id="acsUrlError" class="alert alert-danger custom-alert mt-1" style="display: none; font:size= 12px"></div>
-        <label for="isVerifyCertificateRequired" class="mt-3">Is verify Certificate Enabled:</label>
-        <select id="isVerifyCertificateRequired" class="form-select">
-            <option value="false">No</option>
-            <option value="true">Yes</option>
-        </select>
-        <div id="certificateUploadSection" style="display: none;">
-            <label for="jksFile" class="mt-3">Upload Request Signing Certificate:</label>
-            <input type="file" id="jksFile" class="form-control" accept=".jks,.keystore">
-            <div id="jksFileError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-
-            <label for="jksPassword" class="mt-3">Keystore Password:</label>
-            <input type="password" id="jksPassword" class="form-control" placeholder="Enter keystore password">
-            <div id="jksPasswordError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-
-            <label for="jksAlias" class="mt-3">Certificate Alias (optional):</label>
-            <input type="text" id="jksAlias" class="form-control" placeholder="Enter certificate alias if known">
-        </div>
-        <div class="d-flex gap-3 mt-3">
-            <button class="btn btn-secondary flex-grow-1" onclick="resetForm()">Reset</button>
-            <button class="btn btn-primary flex-grow-1" onclick="validateStep1()">Next</button>
-        </div>
-    </div>
-    <div id="step2-content" class="step-content">
-        <h5>Step 2: View and Send Saml Request</h5>
-        <br>
-        <div class="tab">
-            <button class="tablinks" onclick="openTab(event, 'viewPlainRequest')">Plain SAML Request</button>
-            <button class="tablinks" onclick="openTab(event, 'viewEncodedRequest')">Encoded SAML Request</button>
-        </div>
-
-        <div id="viewPlainRequest" class="tabcontent">
-            <div id="plainSamlRequest" class="alert"></div>
-        </div>
-         <div id="viewEncodedRequest" class="tabcontent">
-            <div id="encodedSamlRequest" class="alert"></div>
-         </div>
-        <input type="hidden" id="SAMLRequest1" name="SAMLRequest" value="test"/>
-        <input type="hidden" id="RelayState" name="RelayState" value="https://sp.example.com/acs"/>
-        <div class="d-flex gap-3 mt-3">
-            <button class="btn btn-secondary flex-grow-1" onclick="prevStep()">Previous</button>
-            <button class="btn btn-primary flex-grow-1" onclick="submitStep2()">Send Saml Request</button>
-        </div>
-    </div>
-    <div id="step3-content" class="step-content">
-        <h4 class="text-primary">Step 3: Saml Respone</h4>
-        <button class="btn btn-secondary mt-3" onclick="prevStep()">Previous</button>
-    </div>
- </div>
-
-
-
-
-
-
-
-
-
-    <!-- OAuth Test Content -->
-    <div id="oauthTest" class="tab-content" style="display: none;">
-        <h2 class="mb-4 text-center">Azure EntraID OAuth Test Application</h2>
+<%@ include file="header.jsp" %>
+<div class="container">
+    <h2 class="mb-4 text-center">Azure EntraID OAuth Test Application</h2>
 
         <!-- OAuth Stepper -->
         <div class="stepper">
@@ -445,28 +397,8 @@
                 <button class="btn btn-primary flex-grow-1" onclick="callApi()">Call API</button>
             </div>
         </div>
-    </div>
-
-
-
-
-
-    <!-- Documentation Content -->
-    <div id="documentation" class="tab-content" style="display: none;">
-       <h2 class="mb-4 text-center">Azure EntraID Test - Documentation</h2>
-        <p>Welcome to the documentation section.</p>
-        <p>Here you can provide detailed information about SAML and OAuth integration.</p>
-        <ul>
-            <li><a href="#">SAML Documentation</a></li>
-            <li><a href="#">OAuth Documentation</a></li>
-            <li><a href="#">API Reference</a></li>
-        </ul>
-    </div>
 </div>
-<footer class="bg-dark text-white text-center py-1 fixed-bottom" style="font-size:12px">
-    <div class="sb-0">&copy; 2025 SAML and OAuth Testing. All rights reserved.</div>
-    <div class="mb-0">Contact: <a href="mailto:aacm-support@ubs.com" class="text-white">aacm-support@ubs.com</a></div>
-</footer>
+<%@ include file="footer.jsp" %>
 <script>
 
     $(document).ready(function() {
@@ -1144,6 +1076,5 @@
         }
     }
 </script>
-
-</body>
+</body
 </html>

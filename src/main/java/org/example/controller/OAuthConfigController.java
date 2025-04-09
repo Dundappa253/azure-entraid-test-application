@@ -11,6 +11,13 @@ import java.util.*;
 
 @Controller
 public class OAuthConfigController {
+
+    @GetMapping("/oauth-test")
+    public String initiateOAuthFlow() {
+        return "oauth-request";
+    }
+
+
     @GetMapping("/oauth/callback")
     public String getOAuthConfiguration(@RequestParam(name = "code") String authCode,
                                         @RequestParam(name = "state") String state, Model model) {
@@ -18,5 +25,7 @@ public class OAuthConfigController {
         model.addAttribute("state",state);
        return "oauth-response";
     }
+
+
 
 }

@@ -7,6 +7,7 @@ import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.saml.saml2.core.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.w3c.dom.Element;
@@ -25,6 +26,11 @@ import org.xml.sax.SAXException;
 
 @Controller
 public class SamlResponseController {
+
+    @GetMapping("/saml-test")
+    public String initiateOAuthFlow() {
+        return "saml-request";
+    }
     @PostMapping("/saml/SSO")
     public String handleSamlResponse(@RequestParam("SAMLResponse") String samlResponse, Model model) {
         System.out.println("Received Response from Saml" + samlResponse);

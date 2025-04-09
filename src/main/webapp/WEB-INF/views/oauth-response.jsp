@@ -200,32 +200,9 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">SAML and OAuth Testing</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" id="samlTestTab" href="#samlTest">Test SAML</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="oauthTestTab" href="#oauthTest">Test OAuth</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="documentationTab" href="#documentation">Documentation</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<%@ include file="header.jsp" %>
 <br>
 <div class="container mt-5">
-    <div id="samlTest" class="tab-content">
-    </div>
 
     <!-- OAuth Test Content -->
     <div id="oauthTest" class="tab-content" style="display: none;">
@@ -447,10 +424,7 @@
     </ul>
 </div>
 </div>
-<footer class="bg-dark text-white text-center py-1 fixed-bottom" style="font-size:12px">
-    <div class="sb-0">&copy; 2025 SAML and OAuth Testing. All rights reserved.</div>
-    <div class="mb-0">Contact: <a href="mailto:aacm-support@ubs.com" class="text-white">aacm-support@ubs.com</a></div>
-</footer>
+<%@ include file="footer.jsp" %>
 <script>
 
     $(document).ready(function() {
@@ -472,6 +446,10 @@
             $(".nav-link").removeClass("active");
             $(this).addClass("active");
             $(".tab-content").hide();
+            if (window.location.href.includes('/oauth/callback')) {
+                const newUrl = window.location.href.replace('/oauth/callback', '');
+                window.history.replaceState({}, document.title, newUrl);
+            }
             const target = $(this).attr("href");
             $(target).show();
         });
