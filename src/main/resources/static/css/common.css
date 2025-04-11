@@ -1,0 +1,222 @@
+/* Base Styles */
+body {
+    background: linear-gradient(white, #e3f2fd, white);
+    font-family: 'Poppins', sans-serif;
+    padding-bottom: 60px;
+}
+
+.container {
+    max-width: 1200px !important;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-weight: bold;
+    color: black;
+    font-size: 22px;
+}
+
+/* Stepper Styles */
+.stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.step {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    background: #d6d6d6;
+    color: black;
+    transition: all 0.3s ease-in-out;
+    border-radius: 5px;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.step.active {
+    background: black;
+    color: white;
+}
+
+.step:last-child {
+    margin-right: 0;
+}
+
+.step-content {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.step-content.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Form Elements */
+.form-control, .form-select {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 15px;
+}
+
+/* Buttons */
+.btn-primary {
+    background: black;
+    border: none;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 15px;
+}
+
+.btn-primary:hover {
+    background: black;
+}
+
+/* Footer */
+.footer-container {
+    max-width: 850px;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Alerts */
+.alert-danger.custom-alert {
+    padding: 8px 8px;
+    font-size: 12px;
+    margin-bottom: 0;
+    line-height: 1.5;
+    border-radius: 4px;
+}
+
+/* Tabs */
+.tab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: 0.3s;
+    background-color: #D3D3D3;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: black;
+    color: white;
+}
+
+.tabcontent {
+    display: none;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+/* Token Display */
+#tokenDisplay {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.token-container {
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+
+.token-value {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-family: monospace;
+    background: white;
+    padding: 10px;
+    border-radius: 3px;
+    border: 1px solid #ced4da;
+    overflow-y: auto;
+}
+
+.token-container h4 {
+    margin-top: 0;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+/* Text Wrapping */
+.wrapText {
+    white-space: pre-wrap;
+    color: inherit !important;
+}
+
+/* Table Styles */
+th, td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 300px;
+}
+
+
+/* ------------ SAML -----------------------------------------------*/
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 15px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Code Display Styles */
+.pretty-xml, .content-div, .xml-display {
+    background: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    color: #333;
+    border: 2px solid grey;
+    line-height: 1.5;
+}
+
+/* Special case for xml-display without border-radius */
+.xml-display {
+    border-radius: 0;
+}
+
+

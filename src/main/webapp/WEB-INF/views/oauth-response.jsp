@@ -5,199 +5,7 @@
     <title>Azure EntraID SAML Test Application 2</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        /* New Theme */
-        body {
-            background: linear-gradient(white, #e3f2fd, white);
-            font-family: 'Poppins', sans-serif;
-            padding-bottom: 60px;
-        }
-        .container {
-            max-width: 1200px !important;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        h2 {
-            font-weight: bold;
-            color: black;
-            font-size: 22px;
-        }
-
-        /* Wider Rectangular Stepper */
-        .stepper {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        .step {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            font-weight: bold;
-            background: #d6d6d6;
-            color: black;
-            transition: all 0.3s ease-in-out;
-            border-radius: 5px;
-            margin-right: 8px;
-            font-size: 14px;
-        }
-        .step.active {
-            background: black;
-            color: white;
-        }
-        .step:last-child {
-            margin-right: 0;
-        }
-
-        /* Step Content */
-        .step-content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
-        }
-        .step-content.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Inputs & Buttons */
-        .form-control, .form-select {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            font-size: 15px;
-        }
-        .btn-primary {
-            background: black;
-            border: none;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 15px;
-        }
-        .btn-primary:hover {
-            background: black;
-        }
-        .btn-secondary {
-            background: #d6d6d6;
-            border: none;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 15px;
-        }
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-       .pretty-xml {
-           background: #f4f4f4;
-           padding: 10px;
-           border-radius: 5px;
-           white-space: pre-wrap; /* Ensures correct wrapping */
-           font-family: "Courier New", monospace;
-           font-size: 14px;
-           color: #333;
-           border: 2px solid grey;
-           line-height: 1.5;
-       }.
-
-       .footer-container {
-                   max-width: 850px;
-                   background: white;
-                   padding: 40px;
-                   border-radius: 10px;
-                   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .alert-danger.custom-alert {
-            padding: 8px 8px; /* Reduce padding to minimize height */
-            font-size: 12px; /* Reduce font size */
-            margin-bottom: 0; /* Remove default margin-bottom */
-            line-height: 1.5; /* Adjust line height for better readability */
-            border-radius: 4px; /* Optional: Adjust border radius */
-        }
-
-        .tab-container {
-             display: flex;
-             flex-direction: column;
-             gap: 20px;
-             padding: 20px;
-         }
-         .tab {
-             overflow: hidden;
-             border: 1px solid #ccc;
-             background-color: #f1f1f1;
-         }
-         .tab button {
-             background-color: inherit;
-             float: left;
-             border: none;
-             outline: none;
-             cursor: pointer;
-             padding: 10px 20px;
-             transition: 0.3s;
-             background-color: #D3D3D3;
-         }
-         .tab button:hover {
-             background-color: #ddd;
-         }
-         .tab button.active {
-             background-color: black;
-             color:white;
-         }
-         .tabcontent {
-             display: none;
-             padding: 10px;
-             border: 1px solid #ccc;
-             border-top: none;
-         }
-
-         #tokenDisplay {
-             margin-top: 20px;
-             width: 100%;
-         }
-
-         .token-container {
-             margin-bottom: 20px;
-             background: #f8f9fa;
-             padding: 15px;
-             border-radius: 5px;
-             border: 1px solid #dee2e6;
-         }
-
-         .token-value {
-             word-wrap: break-word;
-             white-space: pre-wrap;
-             font-family: monospace;
-             background: white;
-             padding: 10px;
-             border-radius: 3px;
-             border: 1px solid #ced4da;
-             overflow-y: auto;
-         }
-
-         .token-container h4 {
-             margin-top: 0;
-             color: #495057;
-             font-size: 1.1rem;
-         }
-
-         .wrapText {
-             white-space: pre-wrap;
-             color: inherit !important;
-         }
-
-         th, td {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-            max-width: 300px; /* Adjust as needed */
-        }
-    </style>
+      <link href="${pageContext.request.contextPath}/static/css/common.css" rel="stylesheet">
 </head>
 <body>
 <%@ include file="header.jsp" %>
@@ -205,7 +13,7 @@
 <div class="container mt-5">
 
     <!-- OAuth Test Content -->
-    <div id="oauthTest" class="tab-content" style="display: none;">
+    <div id="oauthTest" class="tab-content">
         <h2 class="mb-4 text-center">Azure EntraID OAuth Test Application</h2>
 
         <!-- OAuth Stepper -->
@@ -299,7 +107,7 @@
             <h5>Step 2: Get Authorization</h5>
             <br>
             <div class="mb-3">
-                <label class="form-label">Authorization URL:</label>
+                <label class="form-label">Authorization URLL:</label>
                 <div class="input-group">
                     <input type="text" id="authUrl" class="form-control" readonly>
                     <button class="btn btn-outline-secondary" onclick="copyToClipboard('authUrl')">Copy</button>
@@ -330,12 +138,6 @@
 
         <!-- Step 3: Tokens -->
         <div id="oauthStep3-content" class="step-content">
-            <!--    <h5>Step 3: Tokens</h5>
-             <div class="mb-3">
-                  <label class="form-label">Token Details:</label>
-                  <pre id="tokenDetails" class="token-value"></pre>
-              </div> -->
-
             <h5>Step 3: View OAuth Response</h5>
             <div class="tab">
                 <button class="tablinks" onclick="openTab(event, 'idTokenResponse')">ID Token Claims</button>
@@ -347,6 +149,14 @@
 
             <!-- Tab Content -->
             <div id="idTokenResponse" class="tabcontent">
+              <div id="tokenContainer">
+                            <div class="alert alert-info">
+                                <p>OAuth tokens detail being loading...</p>
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+               </div>
                <table id="idTokenTable" class="table table-striped">
                    <thead>
                        <tr>
@@ -429,19 +239,8 @@
 
     $(document).ready(function() {
         // Clear validation messages when user interacts with the fields
-        $("#tenantId").on("input change", function() {
-            $("#tenantIdError").hide().text("");
-        });
 
-        $("#entityId").on("input", function() {
-            $("#entityIdError").hide().text("");
-        });
-
-        $("#acsUrl").on("input", function() {
-            $("#acsUrlError").hide().text("");
-        });
-
-        $(".nav-link").on("click", function(e) {
+     /*   $(".nav-link").on("click", function(e) {
             e.preventDefault(); // Prevent default anchor behavior
             $(".nav-link").removeClass("active");
             $(this).addClass("active");
@@ -452,8 +251,7 @@
             }
             const target = $(this).attr("href");
             $(target).show();
-        });
-        $("#oauthTestTab").click();
+        }); */
 
 
          $("#redirectUri").val(window.location.origin + window.location.pathname);
@@ -475,7 +273,7 @@
                sessionStorage.removeItem('oauthFormState');
 
                // Switch to OAuth tab
-               $("#oauthTestTab").click();
+             //  $("#oauthTestTab").click();
                showOAuthStep(2);
          }
 
@@ -487,7 +285,7 @@
           }
           else if (authCode && state === '12345') {
                // Switch to OAuth tab and populate the auth code
-               $("#oauthTestTab").click();
+          //     $("#oauthTestTab").click();
                $("#authCode").val(authCode);
 
                // Automatically proceed to get tokens
@@ -501,152 +299,6 @@
          }
     });
 
-    $("#isVerifyCertificateRequired").change(function() {
-        if ($(this).val() === "true") {
-            $("#certificateUploadSection").show();
-        } else {
-            $("#certificateUploadSection").hide();
-        }
-    }).trigger("change");
-
-    function validateStep1() {
-        // Clear previous error messages
-        $("#tenantIdError").hide().text("");
-        $("#entityIdError").hide().text("");
-        $("#acsUrlError").hide().text("");
-
-        let isValid = true;
-
-        // Validate Tenant ID
-        const tenantId = $("#tenantId").val();
-        if (!tenantId || tenantId==='-1') {
-            $("#tenantIdError").text("Tenant ID is required.").show();
-            isValid = false;
-        }
-
-        // Validate Entity ID
-        const entityId = $("#entityId").val();
-        if (!entityId) {
-            $("#entityIdError").text("Entity ID is required.").show();
-            isValid = false;
-        }
-
-        // Validate ACS URL
-        const acsUrl = $("#acsUrl").val();
-        if (!acsUrl) {
-            $("#acsUrlError").text("ACS URL is required.").show();
-            isValid = false;
-        }
-
-        if ($("#isVerifyCertificateRequired").val() === "true") {
-                const jksFile = $("#jksFile").val();
-                if (!jksFile) {
-                    $("#jksFileError").text("JKS file is required when certificate verification is enabled.").show();
-                    isValid = false;
-                }
-
-                const jksPassword = $("#jksPassword").val();
-                if (!jksPassword) {
-                    $("#jksPasswordError").text("Keystore password is required.").show();
-                    isValid = false;
-                }
-         }
-
-        // If all inputs are valid, proceed to Step 2
-        if (isValid) {
-            submitStep1();
-        }
-    }
-
-    function submitStep1() {
-        let formData = new FormData();
-        formData.append("tenantId", $("#tenantId").val());
-        formData.append("entityId", $("#entityId").val());
-        formData.append("acsUrl", $("#acsUrl").val());
-        formData.append("isVerifyCertificateRequired", $("#isVerifyCertificateRequired").val());
-
-        if ($("#isVerifyCertificateRequired").val() === "true") {
-            formData.append("jksFile", $("#jksFile")[0].files[0]);
-            formData.append("jksPassword", $("#jksPassword").val());
-            formData.append("jksAlias", $("#jksAlias").val());
-        }
-
-        // Simulated API response (Replace with actual API call)
-        $.ajax({
-            type: "POST",
-            url: "/api/generate-saml-request",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                $("#encodedSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + response.encodedSamlRequest + '</code></pre>');
-                var decodedString = atob(response.encodedSamlRequest);
-                $("#plainSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + prettyPrintXml(decodedString) + '</code></pre>');
-                $("#SAMLRequest1").val(response.encodedSamlRequest);
-                showStep(2);
-            },
-            error: function(xhr) {
-                alert("Error: " + xhr.responseText);
-            }
-        });
-     }
-
-     function submitStep2() {
-           let azureSamlUrl = "https://login.microsoftonline.com/"+$("#tenantId").val()+"/saml2"; // Update with correct tenant ID
-               // Create a hidden form dynamically
-               let form = $('<form>', {
-                   action: azureSamlUrl,
-                   method: 'POST'
-               }).append($('<input>', {
-                   type: 'hidden',
-                   name: 'SAMLRequest',
-                   value: $("#SAMLRequest1").val()
-               }));
-               // Append form to body and submit
-               $('body').append(form);
-               form.submit();
-     }
-
-    function escapeHtml(unsafe) {
-        return unsafe.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-      function prettyPrintXml(xml) {
-          let formatted = "";
-          let reg = /(>)(<)(\/*)/g;
-          xml = xml.replace(reg, "$1\r\n$2$3"); // Add line breaks
-          let pad = 0;
-          xml.split("\r\n").forEach(function(node) {
-              let indent = 0;
-              if (node.match(/.+<\/\w[^>]*>$/)) {
-                  indent = 0; // No change in indent
-              } else if (node.match(/^<\/\w/)) {
-                  pad -= 1; // Decrease indent
-              } else if (node.match(/^<\w[^>]*[^/]>.*$/)) {
-                  indent = 1; // Increase indent
-              } else {
-                  indent = 0;
-              }
-
-              let padding = new Array(pad + 1).join("  ");
-              formatted += padding + node + "\r\n";
-              pad += indent;
-          });
-
-          return formatted.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML
-     }
-
-    function prevStep() {
-        showStep(1);
-    }
-
-    function showStep(step) {
-        $(".step-content").removeClass("active");
-        $("#step" + step + "-content").addClass("active");
-
-        $(".step").removeClass("active");
-        $("#step" + step + "-tab").addClass("active");
-    }
 
      function openTab(evt, tabName) {
                const tabcontent = document.getElementsByClassName("tabcontent");
@@ -661,7 +313,7 @@
                evt.currentTarget.className += " active";
            }
            // Open the default tab
-       document.getElementsByClassName("tablinks")[0].click();
+      document.getElementsByClassName("tablinks")[0].click();
 
 
      async function generateAuthUrl() {
@@ -1020,6 +672,7 @@
                 renderTable(backendResponse.accessTokenClaimList,'#accessTokenTable tbody')
                 // Only now show Step 3 (after backend success)
                 showOAuthStep(3);
+                $("#tokenContainer").hide();
 
                 // Clear URL parameters
                 if (window.history.replaceState) {

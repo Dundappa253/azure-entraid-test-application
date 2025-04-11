@@ -5,66 +5,95 @@
     <title>AuthFlow | Enterprise Authentication Testing</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        /* Original Header/Footer Styles */
-        body {
-                    background: linear-gradient(white, #e3f2fd, white);
-                    font-family: 'Poppins', sans-serif;
-                    padding-bottom: 60px;
-                }
-                .container {
-                    max-width: 1200px !important;
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-                }
-                h2 {
-                    font-weight: bold;
-                    color: black;
-                    font-size: 22px;
-                }
+   <link href="${pageContext.request.contextPath}/static/css/common.css" rel="stylesheet">
+ <style>
+    /* Card Styles for Landing */
+  /* Auth Testing Cards */
+  .auth-testing {
+      background: linear-gradient(white, #f8f9fa, white);
+  }
 
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 15px 0;
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 20px;
-            color: white !important;
-        }
+  .hover-lift {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 12px;
+  }
 
+  .hover-lift:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 2rem 3.5rem rgba(0, 0, 0, 0.1) !important;
+  }
 
-        /* New Landing Page Styles */
-        .hero {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
-            padding: 100px 0;
-            text-align: center;
-        }
-        .value-prop {
-            padding: 80px 0;
-        }
+  .icon-xl {
+      width: 64px;
+      height: 64px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+  }
 
-    </style>
+  .stretched-link::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      content: "";
+  }
+
+  .card-body {
+      position: relative;
+  }
+
+  @media (max-width: 767.98px) {
+      .auth-testing .display-4 {
+          font-size: 2.5rem;
+      }
+  }
+</style>
 </head>
 <body>
     <%@ include file="header.jsp" %>
     <br>
+  <!-- Card-based Authentication Testing Section -->
+  <section class="auth-testing py-5">
+      <div class="container">
+          <div class="text-center mb-5">
+              <h2 class="display-4 fw-bold">Enterprise Authentication Testing</h2>
+              <p class="lead">Validate SAML, OAuth2, and OpenID Connect integrations with Microsoft EntraID</p>
+          </div>
 
-    <!-- New Landing Content -->
-    <section class="hero">
-        <div class="container">
-            <h1 class="display-4 fw-bold mb-4">Enterprise Authentication Testing</h1>
-            <p class="lead mb-5">Validate SAML, OAuth2, and OpenID Connect integrations with Microsoft EntraID</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="/saml-test" class="btn btn-outline-dark">Test SAML SSO Flow</a>
-                <a href="/oauth-test" class="btn btn-outline-dark">Test OAuth SSO Flow</a>
-            </div>
-        </div>
-    </section>
+          <div class="row g-4 justify-content-center">
+              <!-- SAML Test Card -->
+              <div class="col-md-6 col-lg-5">
+                  <div class="card h-100 border-0 shadow-sm hover-lift">
+                      <div class="card-body p-4 text-center">
+                          <div class="icon-xl bg-light rounded-circle mb-3">
+                              <i class="bi bi-shield-lock fs-2 text-primary"></i>
+                          </div>
+                          <h3 class="h4 mb-3">SAML SSO Testing</h3>
+                          <p class="mb-4">Validate your SAML 2.0 authentication flows and troubleshoot integration issues</p>
+                          <a href="/saml-test" class="btn btn-dark stretched-link">Test SAML SSO</a>
+                      </div>
+                  </div>
+              </div>
 
+              <!-- OAuth Test Card -->
+              <div class="col-md-6 col-lg-5">
+                  <div class="card h-100 border-0 shadow-sm hover-lift">
+                      <div class="card-body p-4 text-center">
+                          <div class="icon-xl bg-light rounded-circle mb-3">
+                              <i class="bi bi-key fs-2 text-primary"></i>
+                          </div>
+                          <h3 class="h4 mb-3">OAuth SSO Testing</h3>
+                          <p class="mb-4">Verify OAuth2 and OpenID Connect implementations with Microsoft EntraID</p>
+                          <a href="/oauth-test" class="btn btn-dark stretched-link">Test OAuth SSO</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
     <%@ include file="footer.jsp" %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

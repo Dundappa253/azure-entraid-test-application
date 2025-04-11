@@ -19,35 +19,18 @@ public class SamlConfigController {
     @Autowired
     private SamlSignAndVerifyCoreService samlSignAndVerifyCoreService;
 
-    @PostMapping(value = "/api/generate-saml-request",consumes = "multipart/form-data")
-    public Map<String, String> handleSamlRequest( @RequestParam String tenantId,
-                                                  @RequestParam String entityId,
-                                                  @RequestParam String acsUrl,
-                                                  @RequestParam boolean isVerifyCertificateRequired,
-                                                  @RequestParam(required = false) MultipartFile jksFile,
-                                                  @RequestParam(required = false) String jksPassword,
-                                                  @RequestParam(required = false) String jksAlias) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-
-
-
-        SamlMetadataModel.SigningCertificate signingCertificate = new SamlMetadataModel.SigningCertificate();
-        signingCertificate.setCertificateData(jksFile);
-        signingCertificate.setAlias(jksAlias);
-        signingCertificate.setKeyStorePassword(jksPassword);
-        signingCertificate.setKeyPassword(jksPassword);
-
+    @PostMapping(value = "/api/generate-saml-request")
+    public Map<String, String> handleSamlRequest(
+            @RequestParam String tenantId,
+            @RequestParam String entityId,
+            @RequestParam String acsUrl,
+            @RequestParam String verifyCertificateRequired)  {
         SamlMetadataModel samlMetadataModel = SamlMetadataModel.builder()
                 .tenantId(tenantId)
                 .entityId(entityId)
                 .acsUrl(acsUrl)
-                .verifyCertificateRequired(isVerifyCertificateRequired)
-                .signingCertificate(signingCertificate);
+                .verifyCertificateRequired(Boolean.valueOf(verifyCertificateRequired));
 
-        KeyStore keyStore = null;
-        if (isVerifyCertificateRequired && jksFile != null && !jksFile.isEmpty()) {
-            keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(jksFile.getInputStream(), jksPassword.toCharArray());
-        }
 
         return samlSignAndVerifyCoreService.generateSignSamlRequest(samlMetadataModel);
     }

@@ -5,426 +5,188 @@
     <title>Azure EntraID SAML Test Application 2</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        /* New Theme */
-        body {
-            background: linear-gradient(white, #e3f2fd, white);
-            font-family: 'Poppins', sans-serif;
-            padding-bottom: 60px;
-        }
-        .container {
-            max-width: 1200px !important;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        h2 {
-            font-weight: bold;
-            color: black;
-            font-size: 22px;
-        }
-
-        /* Wider Rectangular Stepper */
-        .stepper {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        .step {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            font-weight: bold;
-            background: #d6d6d6;
-            color: black;
-            transition: all 0.3s ease-in-out;
-            border-radius: 5px;
-            margin-right: 8px;
-            font-size: 14px;
-        }
-        .step.active {
-            background: black;
-            color: white;
-        }
-        .step:last-child {
-            margin-right: 0;
-        }
-
-        /* Step Content */
-        .step-content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.4s ease-in-out;
-        }
-        .step-content.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Inputs & Buttons */
-        .form-control, .form-select {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            font-size: 15px;
-        }
-        .btn-primary {
-            background: black;
-            border: none;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 15px;
-        }
-        .btn-primary:hover {
-            background: black;
-        }
-        .btn-secondary {
-            background: #d6d6d6;
-            border: none;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 6px;
-            width: 100%;
-            font-size: 15px;
-        }
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-       .pretty-xml {
-           background: #f4f4f4;
-           padding: 10px;
-           border-radius: 5px;
-           white-space: pre-wrap; /* Ensures correct wrapping */
-           font-family: "Courier New", monospace;
-           font-size: 14px;
-           color: #333;
-           border: 2px solid grey;
-           line-height: 1.5;
-       }.
-
-       .footer-container {
-                   max-width: 850px;
-                   background: white;
-                   padding: 40px;
-                   border-radius: 10px;
-                   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .alert-danger.custom-alert {
-            padding: 8px 8px; /* Reduce padding to minimize height */
-            font-size: 12px; /* Reduce font size */
-            margin-bottom: 0; /* Remove default margin-bottom */
-            line-height: 1.5; /* Adjust line height for better readability */
-            border-radius: 4px; /* Optional: Adjust border radius */
-        }
-
-        .tab-container {
-             display: flex;
-             flex-direction: column;
-             gap: 20px;
-             padding: 20px;
-         }
-         .tab {
-             overflow: hidden;
-             border: 1px solid #ccc;
-             background-color: #f1f1f1;
-         }
-         .tab button {
-             background-color: inherit;
-             float: left;
-             border: none;
-             outline: none;
-             cursor: pointer;
-             padding: 10px 20px;
-             transition: 0.3s;
-             background-color: #D3D3D3;
-         }
-         .tab button:hover {
-             background-color: #ddd;
-         }
-         .tab button.active {
-             background-color: black;
-             color:white;
-         }
-         .tabcontent {
-             display: none;
-             padding: 10px;
-             border: 1px solid #ccc;
-             border-top: none;
-         }
-
-         #tokenDisplay {
-             margin-top: 20px;
-             width: 100%;
-         }
-
-         .token-container {
-             margin-bottom: 20px;
-             background: #f8f9fa;
-             padding: 15px;
-             border-radius: 5px;
-             border: 1px solid #dee2e6;
-         }
-
-         .token-value {
-             word-wrap: break-word;
-             white-space: pre-wrap;
-             font-family: monospace;
-             background: white;
-             padding: 10px;
-             border-radius: 3px;
-             border: 1px solid #ced4da;
-             overflow-y: auto;
-         }
-
-         .token-container h4 {
-             margin-top: 0;
-             color: #495057;
-             font-size: 1.1rem;
-         }
-
-         .wrapText {
-             white-space: pre-wrap;
-             color: inherit !important;
-         }
-
-         th, td {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-            max-width: 300px; /* Adjust as needed */
-        }
-
-        body {
-                    background: linear-gradient(white, #e3f2fd, white);
-                    font-family: 'Poppins', sans-serif;
-                    padding-bottom: 60px;
-                }
-                .container {
-                    max-width: 1200px !important;
-                    background: white;
-                    padding: 25px;
-                    border-radius: 10px;
-                    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-                }
-                h2 {
-                    font-weight: bold;
-                    color: black;
-                    font-size: 22px;
-                }
-    </style>
+   <link href="${pageContext.request.contextPath}/static/css/common.css" rel="stylesheet">
 </head>
 <body>
 <%@ include file="header.jsp" %>
+<br><br><br>
 <div class="container">
     <h2 class="mb-4 text-center">Azure EntraID OAuth Test Application</h2>
 
-        <!-- OAuth Stepper -->
-        <div class="stepper">
-            <div class="step active" id="oauthStep1-tab">Step 1: Configuration</div>
-            <div class="step" id="oauthStep2-tab">Step 2: Authorization</div>
-            <div class="step" id="oauthStep3-tab">Step 3: Tokens</div>
-            <div class="step" id="oauthStep4-tab">Step 4: API Test</div>
+    <!-- OAuth Stepper -->
+    <div class="stepper">
+        <div class="step active" id="oauthStep1-tab">Step 1: Configuration</div>
+        <div class="step" id="oauthStep2-tab">Step 2: Authorization</div>
+        <div class="step" id="oauthStep3-tab">Step 3: Tokens</div>
+        <div class="step" id="oauthStep4-tab">Step 4: API Test</div>
+    </div>
+
+    <!-- Step 1: Configuration -->
+    <div id="oauthStep1-content" class="step-content active">
+        <h5>Step 1: Configure OAuth Settings</h5>
+        <br>
+        <div class="mb-3">
+            <label for="oauthTenantId" class="form-label">Tenant ID:</label>
+            <select id="oauthTenantId" class="form-select">
+                <option value="-1">Select Azure Tenant</option>
+                <option value="dba21c9c-dbbc-4b6a-9473-8e886854204f">My Tenant - dba21c9c-dbbc-4b6a-9473-8e886854204f
+                </option>
+            </select>
+            <div id="oauthTenantIdError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
         </div>
 
-        <!-- Step 1: Configuration -->
-        <div id="oauthStep1-content" class="step-content active">
-            <h5>Step 1: Configure OAuth Settings</h5>
-            <br>
-            <div class="mb-3">
-                <label for="oauthTenantId" class="form-label">Tenant ID:</label>
-                <select id="oauthTenantId" class="form-select">
-                    <option value="-1">Select Azure Tenant</option>
-                    <option value="dba21c9c-dbbc-4b6a-9473-8e886854204f">My Tenant - dba21c9c-dbbc-4b6a-9473-8e886854204f</option>
-                </select>
-                <div id="oauthTenantIdError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-            </div>
+        <!-- Rest of the configuration form remains the same -->
+        <div class="mb-3">
+            <label for="clientId" class="form-label">Client ID:</label>
+            <input type="text" id="clientId" class="form-control" placeholder="Enter Application (Client) ID">
+            <div id="clientIdError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+        </div>
 
-            <!-- Rest of the configuration form remains the same -->
-            <div class="mb-3">
-                <label for="clientId" class="form-label">Client ID:</label>
-                <input type="text" id="clientId" class="form-control" placeholder="Enter Application (Client) ID">
-                <div id="clientIdError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-            </div>
+        <div class="mb-3">
+            <label for="clientSecret" class="form-label">Client Secret:</label>
+            <input type="password" id="clientSecret" class="form-control" placeholder="Enter Client Secret">
+            <div id="clientSecretError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+        </div>
 
-            <div class="mb-3">
-                <label for="clientSecret" class="form-label">Client Secret:</label>
-                <input type="password" id="clientSecret" class="form-control" placeholder="Enter Client Secret">
-                <div id="clientSecretError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-            </div>
+        <div class="mb-3">
+            <label for="redirectUri" class="form-label">Redirect URI:</label>
+            <input type="text" id="redirectUri" class="form-control" value="http://localhost:8080/oauth/callback">
+            <div id="redirectUriError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+        </div>
 
-            <div class="mb-3">
-                <label for="redirectUri" class="form-label">Redirect URI:</label>
-                <input type="text" id="redirectUri" class="form-control" value="http://localhost:8080/oauth/callback">
-                <div id="redirectUriError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-            </div>
+        <div class="mb-3">
+            <label class="form-label">Grant Type:</label>
+            <select id="grantType" class="form-select">
+                <option value="authorization_code">Authorization Code</option>
+                <option value="client_credentials">Client Credentials</option>
+                <option value="password">Password (ROPC)</option>
+                <option value="implicit">Implicit (legacy)</option>
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Grant Type:</label>
-                <select id="grantType" class="form-select">
-                    <option value="authorization_code">Authorization Code</option>
-                    <option value="client_credentials">Client Credentials</option>
-                    <option value="password">Password (ROPC)</option>
-                    <option value="implicit">Implicit (legacy)</option>
-                </select>
+        <div class="mb-3" id="scopesContainer">
+            <label class="form-label">Scopes:</label>
+            <div class="scope-item">
+                <input type="checkbox" id="scope_openid" checked>
+                <label for="scope_openid">openid</label>
             </div>
-
-            <div class="mb-3" id="scopesContainer">
-                <label class="form-label">Scopes:</label>
-                <div class="scope-item">
-                    <input type="checkbox" id="scope_openid" checked>
-                    <label for="scope_openid">openid</label>
-                </div>
-                <div class="scope-item">
-                    <input type="checkbox" id="scope_profile" checked>
-                    <label for="scope_profile">profile</label>
-                </div>
-                <div class="scope-item">
-                    <input type="checkbox" id="scope_email" checked>
-                    <label for="scope_email">email</label>
-                </div>
-                <div class="scope-item">
-                    <input type="checkbox" id="scope_offline_access">
-                    <label for="scope_offline_access">offline_access</label>
-                </div>
-                <div class="scope-item">
-                    <input type="checkbox" id="scope_user_read">
-                    <label for="scope_user_read">User.Read</label>
-                </div>
-                <div class="scope-item">
-                    <input type="text" id="customScope" class="form-control mt-2" placeholder="Or enter custom scope">
-                </div>
+            <div class="scope-item">
+                <input type="checkbox" id="scope_profile" checked>
+                <label for="scope_profile">profile</label>
             </div>
-
-            <div class="d-flex gap-3">
-                <button class="btn btn-secondary flex-grow-1" onclick="resetOAuthForm()">Reset</button>
-                <button class="btn btn-primary flex-grow-1" onclick="validateOAuthStep1()">Next</button>
+            <div class="scope-item">
+                <input type="checkbox" id="scope_email" checked>
+                <label for="scope_email">email</label>
+            </div>
+            <div class="scope-item">
+                <input type="checkbox" id="scope_offline_access">
+                <label for="scope_offline_access">offline_access</label>
+            </div>
+            <div class="scope-item">
+                <input type="checkbox" id="scope_user_read">
+                <label for="scope_user_read">User.Read</label>
+            </div>
+            <div class="scope-item">
+                <input type="text" id="customScope" class="form-control mt-2" placeholder="Or enter custom scope">
             </div>
         </div>
 
-        <!-- Step 2: Authorization -->
-        <div id="oauthStep2-content" class="step-content">
-            <h5>Step 2: Get Authorization</h5>
-            <br>
-            <div class="mb-3">
-                <label class="form-label">Authorization URL:</label>
-                <div class="input-group">
-                    <input type="text" id="authUrl" class="form-control" readonly>
-                    <button class="btn btn-outline-secondary" onclick="copyToClipboard('authUrl')">Copy</button>
-                </div>
-            </div>
+        <div class="d-flex gap-3">
+            <button class="btn btn-secondary flex-grow-1" onclick="resetOAuthForm()">Reset</button>
+            <button class="btn btn-primary flex-grow-1" onclick="validateOAuthStep1()">Next</button>
+        </div>
+    </div>
 
-            <div class="mb-3">
-                <button class="btn btn-primary" onclick="startAuthFlow()">Launch Authorization</button>
-            </div>
-
-            <div class="mb-3">
-                <label for="authCode" class="form-label">Authorization Code:</label>
-                <textarea id="authCode" class="form-control" rows="2" placeholder="Paste the authorization code"></textarea>
-                <div id="authCodeError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-            </div>
-
-            <div id="authFlowContainer" style="display: none;">
-                <div class="alert alert-info">
-                    <p>You are being redirected to Microsoft for authentication...</p>
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
+    <!-- Step 2: Authorization -->
+    <div id="oauthStep2-content" class="step-content">
+        <h5>Step 2: Get Authorization</h5>
+        <br>
+        <div class="mb-3">
+            <label class="form-label">Authorization URL:</label>
+            <div class="input-group">
+                <textarea id="authUrl" class="form-control" readonly rows="5" >
+                </textarea>
             </div>
 
         </div>
+        <div class="d-flex gap-3">
+            <button class="btn btn-secondary flex-grow-1" onclick="resetOAuthForm()">Back</button>
+            <button class="btn btn-primary flex-grow-1" onclick="startAuthFlow()">Send Authorize Request</button>
+        </div>
 
-        <!-- Step 3: Tokens -->
-        <div id="oauthStep3-content" class="step-content">
-            <h5>Step 3: Tokens</h5>
-            <br>
-            <div class="mb-3">
-                <label class="form-label">Access Token:</label>
-                <div class="oauth-token-container">
-                    <span id="accessToken"></span>
-                    <span class="copy-btn" onclick="copyToClipboard('accessToken')">Copy</span>
-                </div>
-            </div>
+        <div class="mb-3" style="display:none">
+            <label for="authCode" class="form-label">Authorization Code:</label>
+            <textarea id="authCode" class="form-control" rows="2" placeholder="Paste the authorization code"></textarea>
+            <div id="authCodeError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+        </div>
+    </div>
 
-            <div class="mb-3" id="refreshTokenContainer">
-                <label class="form-label">Refresh Token:</label>
-                <div class="oauth-token-container">
-                    <span id="refreshToken"></span>
-                    <span class="copy-btn" onclick="copyToClipboard('refreshToken')">Copy</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">ID Token:</label>
-                <div class="oauth-token-container">
-                    <span id="idToken"></span>
-                    <span class="copy-btn" onclick="copyToClipboard('idToken')">Copy</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Token Details:</label>
-                <pre id="tokenDetails" class="oauth-token-container"></pre>
-            </div>
-
-            <div class="d-flex gap-3">
-                <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
-                <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
-                <button class="btn btn-info flex-grow-1" id="refreshTokenBtn" onclick="refreshTokens()" style="display: none;">Refresh Token</button>
+    <!-- Step 3: Tokens -->
+    <div id="oauthStep3-content" class="step-content">
+        <h5>Step 3: Tokens</h5>
+        <br>
+        <div class="mb-3">
+            <label class="form-label">Access Token:</label>
+            <div class="oauth-token-container">
+                <span id="accessToken"></span>
+                <span class="copy-btn" onclick="copyToClipboard('accessToken')">Copy</span>
             </div>
         </div>
 
-        <!-- Step 4: API Test -->
-        <div id="oauthStep4-content" class="step-content">
-            <h5>Step 4: API Test</h5>
-            <br>
-            <div class="mb-3">
-                <label for="apiEndpoint" class="form-label">API Endpoint:</label>
-                <input type="text" id="apiEndpoint" class="form-control" value="https://graph.microsoft.com/v1.0/me">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">API Response:</label>
-                <pre id="apiResponse" class="oauth-token-container"></pre>
-            </div>
-
-            <div class="d-flex gap-3">
-                <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(3)">Previous</button>
-                <button class="btn btn-primary flex-grow-1" onclick="callApi()">Call API</button>
+        <div class="mb-3" id="refreshTokenContainer">
+            <label class="form-label">Refresh Token:</label>
+            <div class="oauth-token-container">
+                <span id="refreshToken"></span>
+                <span class="copy-btn" onclick="copyToClipboard('refreshToken')">Copy</span>
             </div>
         </div>
+
+        <div class="mb-3">
+            <label class="form-label">ID Token:</label>
+            <div class="oauth-token-container">
+                <span id="idToken"></span>
+                <span class="copy-btn" onclick="copyToClipboard('idToken')">Copy</span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Token Details:</label>
+            <pre id="tokenDetails" class="oauth-token-container"></pre>
+        </div>
+
+        <div class="d-flex gap-3">
+            <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
+            <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
+            <button class="btn btn-info flex-grow-1" id="refreshTokenBtn" onclick="refreshTokens()"
+                    style="display: none;">Refresh Token
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 4: API Test -->
+    <div id="oauthStep4-content" class="step-content">
+        <h5>Step 4: API Test</h5>
+        <br>
+        <div class="mb-3">
+            <label for="apiEndpoint" class="form-label">API Endpoint:</label>
+            <input type="text" id="apiEndpoint" class="form-control" value="https://graph.microsoft.com/v1.0/me">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">API Response:</label>
+            <pre id="apiResponse" class="oauth-token-container"></pre>
+        </div>
+
+        <div class="d-flex gap-3">
+            <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(3)">Previous</button>
+            <button class="btn btn-primary flex-grow-1" onclick="callApi()">Call API</button>
+        </div>
+    </div>
 </div>
 <%@ include file="footer.jsp" %>
 <script>
 
     $(document).ready(function() {
-        // Clear validation messages when user interacts with the fields
-        $("#tenantId").on("input change", function() {
-            $("#tenantIdError").hide().text("");
-        });
-
-        $("#entityId").on("input", function() {
-            $("#entityIdError").hide().text("");
-        });
-
-        $("#acsUrl").on("input", function() {
-            $("#acsUrlError").hide().text("");
-        });
-
-        $(".nav-link").on("click", function(e) {
-            e.preventDefault(); // Prevent default anchor behavior
-            $(".nav-link").removeClass("active");
-            $(this).addClass("active");
-            $(".tab-content").hide();
-            const target = $(this).attr("href");
-            $(target).show();
-        });
-        $("#samlTestTab").click();
-
 
          $("#redirectUri").val(window.location.origin + window.location.pathname);
 
@@ -470,200 +232,6 @@
                }, 500);
          }
     });
-
-    $("#isVerifyCertificateRequired").change(function() {
-        if ($(this).val() === "true") {
-            $("#certificateUploadSection").show();
-        } else {
-            $("#certificateUploadSection").hide();
-        }
-    }).trigger("change");
-
-    function validateStep1() {
-        // Clear previous error messages
-        $("#tenantIdError").hide().text("");
-        $("#entityIdError").hide().text("");
-        $("#acsUrlError").hide().text("");
-
-        let isValid = true;
-
-        // Validate Tenant ID
-        const tenantId = $("#tenantId").val();
-        if (!tenantId || tenantId==='-1') {
-            $("#tenantIdError").text("Tenant ID is required.").show();
-            isValid = false;
-        }
-
-        // Validate Entity ID
-        const entityId = $("#entityId").val();
-        if (!entityId) {
-            $("#entityIdError").text("Entity ID is required.").show();
-            isValid = false;
-        }
-
-        // Validate ACS URL
-        const acsUrl = $("#acsUrl").val();
-        if (!acsUrl) {
-            $("#acsUrlError").text("ACS URL is required.").show();
-            isValid = false;
-        }
-
-        if ($("#isVerifyCertificateRequired").val() === "true") {
-                const jksFile = $("#jksFile").val();
-                if (!jksFile) {
-                    $("#jksFileError").text("JKS file is required when certificate verification is enabled.").show();
-                    isValid = false;
-                }
-
-                const jksPassword = $("#jksPassword").val();
-                if (!jksPassword) {
-                    $("#jksPasswordError").text("Keystore password is required.").show();
-                    isValid = false;
-                }
-         }
-
-        // If all inputs are valid, proceed to Step 2
-        if (isValid) {
-            submitStep1();
-        }
-    }
-
-    function submitStep1() {
-        let formData = new FormData();
-        formData.append("tenantId", $("#tenantId").val());
-        formData.append("entityId", $("#entityId").val());
-        formData.append("acsUrl", $("#acsUrl").val());
-        formData.append("isVerifyCertificateRequired", $("#isVerifyCertificateRequired").val());
-
-        if ($("#isVerifyCertificateRequired").val() === "true") {
-            formData.append("jksFile", $("#jksFile")[0].files[0]);
-            formData.append("jksPassword", $("#jksPassword").val());
-            formData.append("jksAlias", $("#jksAlias").val());
-        }
-
-        // Simulated API response (Replace with actual API call)
-        $.ajax({
-            type: "POST",
-            url: "/api/generate-saml-request",
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                $("#encodedSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + response.encodedSamlRequest + '</code></pre>');
-                var decodedString = atob(response.encodedSamlRequest);
-                $("#plainSamlRequest").html('<pre class="pretty-xml"><code class="language-xml">' + prettyPrintXml(decodedString) + '</code></pre>');
-                $("#SAMLRequest1").val(response.encodedSamlRequest);
-                showStep(2);
-            },
-            error: function(xhr) {
-                alert("Error: " + xhr.responseText);
-            }
-        });
-     }
-
-     function submitStep2() {
-           let azureSamlUrl = "https://login.microsoftonline.com/"+$("#tenantId").val()+"/saml2"; // Update with correct tenant ID
-               // Create a hidden form dynamically
-               let form = $('<form>', {
-                   action: azureSamlUrl,
-                   method: 'POST'
-               }).append($('<input>', {
-                   type: 'hidden',
-                   name: 'SAMLRequest',
-                   value: $("#SAMLRequest1").val()
-               }));
-               // Append form to body and submit
-               $('body').append(form);
-               form.submit();
-     }
-
-    function escapeHtml(unsafe) {
-        return unsafe.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-      function prettyPrintXml(xml) {
-          let formatted = "";
-          let reg = /(>)(<)(\/*)/g;
-          xml = xml.replace(reg, "$1\r\n$2$3"); // Add line breaks
-          let pad = 0;
-          xml.split("\r\n").forEach(function(node) {
-              let indent = 0;
-              if (node.match(/.+<\/\w[^>]*>$/)) {
-                  indent = 0; // No change in indent
-              } else if (node.match(/^<\/\w/)) {
-                  pad -= 1; // Decrease indent
-              } else if (node.match(/^<\w[^>]*[^/]>.*$/)) {
-                  indent = 1; // Increase indent
-              } else {
-                  indent = 0;
-              }
-
-              let padding = new Array(pad + 1).join("  ");
-              formatted += padding + node + "\r\n";
-              pad += indent;
-          });
-
-          return formatted.replace(/</g, "&lt;").replace(/>/g, "&gt;"); // Escape HTML
-     }
-
-    function prevStep() {
-        showStep(1);
-    }
-
-    function showStep(step) {
-        $(".step-content").removeClass("active");
-        $("#step" + step + "-content").addClass("active");
-
-        $(".step").removeClass("active");
-        $("#step" + step + "-tab").addClass("active");
-    }
-
-    function resetForm() {
-        // Reset input fields
-        $("#tenantId").val("-1"); // Reset to default option
-        $("#entityId").val(""); // Clear Entity ID
-        $("#acsUrl").val(""); // Clear ACS URL
-
-        // Reset Step 2 and Step 3 content (if needed)
-        $("#plainSamlRequest").html(""); // Clear plain SAML request
-        $("#encodedSamlRequest").html(""); // Clear encoded SAML request
-        $("#SAMLRequest1").val(""); // Clear hidden SAML request input
-        $("#RelayState").val("https://sp.example.com/acs"); // Reset RelayState (if needed)
-
-        $("#jksFile").val("");
-        $("#jksPassword").val("");
-        $("#jksAlias").val("");
-        $("#jksFileError").hide().text("");
-        $("#jksPasswordError").hide().text("");
-
-        // Reset stepper to Step 1
-        showStep(1);
-    }
-
-     function openTab(evt, tabName) {
-               const tabcontent = document.getElementsByClassName("tabcontent");
-               for (let i = 0; i < tabcontent.length; i++) {
-                   tabcontent[i].style.display = "none";
-               }
-               const tablinks = document.getElementsByClassName("tablinks");
-               for (let i = 0; i < tablinks.length; i++) {
-                   tablinks[i].className = tablinks[i].className.replace(" active", "");
-               }
-               document.getElementById(tabName).style.display = "block";
-               evt.currentTarget.className += " active";
-           }
-           // Open the default tab
-       document.getElementsByClassName("tablinks")[0].click();
-
-
-
-
-
-
-
-
-
-
 
 
      async function generateAuthUrl() {
@@ -746,17 +314,10 @@
      }
 
     function startAuthFlow() {
-        console.log('11111111111')
-        // Validate inputs first
-      //  if (!validateOAuthStep1()) {
-     //     console.log('222222')
-      //      return;
-      //  }
-
         // Show loading state
-        $("#authFlowContainer").show();
+       // $("#authFlowContainer").show();
         $("#authUrl").closest('.mb-3').hide();
-        console.log('3333333')
+
         // Store current form state in sessionStorage
         const formState = {
             tenantId: $("#oauthTenantId").val(),
@@ -764,11 +325,8 @@
             redirectUri: $("#redirectUri").val(),
             scopes: getSelectedScopes()
         };
-        console.log('44444444')
-        sessionStorage.setItem('oauthFormState', JSON.stringify(formState));
-        console.log('5555550'+$("#authUrl").val());
 
-        // Redirect to Microsoft login
+        sessionStorage.setItem('oauthFormState', JSON.stringify(formState));
         window.location.href = $("#authUrl").val();
     }
 
@@ -1076,5 +634,5 @@
         }
     }
 </script>
-</body
+</body>
 </html>

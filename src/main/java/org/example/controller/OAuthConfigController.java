@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,8 +20,11 @@ public class OAuthConfigController {
 
 
     @GetMapping("/oauth/callback")
-    public String getOAuthConfiguration(@RequestParam(name = "code") String authCode,
-                                        @RequestParam(name = "state") String state, Model model) {
+    public String getOAuthConfiguration(@RequestParam(name = "code",required = false) String authCode,
+                                        @RequestParam(name = "state",required = false) String state, Model model) {
+        if(Strings.isBlank(authCode)){
+            return "oauth-request";
+        }
         model.addAttribute("authCode",authCode);
         model.addAttribute("state",state);
        return "oauth-response";

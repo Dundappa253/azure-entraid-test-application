@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.apache.logging.log4j.util.Strings;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
@@ -33,6 +34,9 @@ public class SamlResponseController {
     }
     @PostMapping("/saml/SSO")
     public String handleSamlResponse(@RequestParam("SAMLResponse") String samlResponse, Model model) {
+        if(Strings.isBlank(samlResponse)){
+            return "saml-request";
+        }
         System.out.println("Received Response from Saml" + samlResponse);
         byte[] decodedBytes = Base64.getDecoder().decode(samlResponse);
         String decodedSamlResponse = new String(decodedBytes, StandardCharsets.UTF_8);
