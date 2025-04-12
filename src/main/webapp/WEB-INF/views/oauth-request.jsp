@@ -43,18 +43,6 @@
         </div>
 
         <div class="mb-3">
-            <label for="clientSecret" class="form-label">Client Secret:</label>
-            <input type="password" id="clientSecret" class="form-control" placeholder="Enter Client Secret">
-            <div id="clientSecretError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-        </div>
-
-        <div class="mb-3">
-            <label for="redirectUri" class="form-label">Redirect URI:</label>
-            <input type="text" id="redirectUri" class="form-control" value="http://localhost:8080/oauth/callback">
-            <div id="redirectUriError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
-        </div>
-
-        <div class="mb-3">
             <label class="form-label">Grant Type:</label>
             <select id="grantType" class="form-select">
                 <option value="authorization_code">Authorization Code</option>
@@ -63,6 +51,18 @@
                 <option value="implicit">Implicit (legacy)</option>
             </select>
         </div>
+
+        <div class="mb-3" id="redirectUri_div">
+            <label for="redirectUri" class="form-label">Redirect URI:</label>
+            <input type="text" id="redirectUri" class="form-control" value="http://localhost:8080/oauth/callback">
+            <div id="redirectUriError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+        </div>
+
+        <div class="mb-3" id="clientSecret_div">
+             <label for="clientSecret" class="form-label">Client Secret:</label>
+             <input type="password" id="clientSecret" class="form-control" placeholder="Enter Client Secret">
+             <div id="clientSecretError" class="alert alert-danger custom-alert mt-1" style="display: none;"></div>
+         </div>
 
         <div class="mb-3" id="scopesContainer">
             <label class="form-label">Scopes:</label>
@@ -99,16 +99,19 @@
 
     <!-- Step 2: Authorization -->
     <div id="oauthStep2-content" class="step-content">
-        <h5>Step 2: Get Authorization</h5>
+        <h5>Step 2: Get Authorization </h5>
         <br>
-        <div class="mb-3">
+        <div class="mb-3" id="authorizationId">
             <label class="form-label">Authorization URL:</label>
             <div class="input-group">
                 <textarea id="authUrl" class="form-control" readonly rows="5" >
                 </textarea>
             </div>
-
         </div>
+        <jsp:include page="page-loader.jsp">
+             <jsp:param name="loader-id" value="oauth-1" />
+             <jsp:param name="loader-message" value="OAuth Response Detail is being loading" />
+        </jsp:include>
         <div class="d-flex gap-3">
             <button class="btn btn-secondary flex-grow-1" onclick="resetOAuthForm()">Back</button>
             <button class="btn btn-primary flex-grow-1" onclick="startAuthFlow()">Send Authorize Request</button>
@@ -148,12 +151,10 @@
                 <span class="copy-btn" onclick="copyToClipboard('idToken')">Copy</span>
             </div>
         </div>
-
         <div class="mb-3">
             <label class="form-label">Token Details:</label>
             <pre id="tokenDetails" class="oauth-token-container"></pre>
         </div>
-
         <div class="d-flex gap-3">
             <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
             <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
@@ -188,7 +189,7 @@
 
     $(document).ready(function() {
 
-         $("#redirectUri").val(window.location.origin + window.location.pathname);
+           //$("#redirectUri").val(window.location.origin + window.location.pathname);
 
            // Check for authorization code in URL (OAuth callback)
            const urlParams = new URLSearchParams(window.location.search);
@@ -221,7 +222,6 @@
                // Switch to OAuth tab and populate the auth code
                $("#oauthTestTab").click();
                $("#authCode").val(authCode);
-
                // Automatically proceed to get tokens
                setTimeout(() => {
                    validateOAuthStep2();
@@ -231,6 +231,19 @@
                    }
                }, 500);
          }
+
+         $("#grantType").change(function() {
+             if ($(this).val() === "authorization_code") {
+                 $("#redirectUri_div").show();
+                 $("#clientSecret_div").hide();
+             } else if($(this).val() === "client_credentials") {
+                 $("#redirectUri_div").hide();
+                 $("#clientSecret_div").show();
+             } else {
+                 $("#redirectUri_div").show();
+                 $("#redirectUri_div").hide();
+             }
+         }).trigger("change");
     });
 
 
@@ -315,8 +328,8 @@
 
     function startAuthFlow() {
         // Show loading state
-       // $("#authFlowContainer").show();
-        $("#authUrl").closest('.mb-3').hide();
+
+      //  $("#authUrl").closest('.mb-3').hide();
 
         // Store current form state in sessionStorage
         const formState = {
@@ -328,6 +341,7 @@
 
         sessionStorage.setItem('oauthFormState', JSON.stringify(formState));
         window.location.href = $("#authUrl").val();
+
     }
 
     function getSelectedScopes() {
@@ -572,7 +586,6 @@
             $("#redirectUriError").text("Redirect URI is required").show();
             isValid = false;
         }
-
         if (isValid) {
             generateAuthUrl().then(() => {
                 showOAuthStep(2);

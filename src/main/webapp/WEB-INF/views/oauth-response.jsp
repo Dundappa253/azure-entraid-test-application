@@ -107,7 +107,7 @@
             <h5>Step 2: Get Authorization</h5>
             <br>
             <div class="mb-3">
-                <label class="form-label">Authorization URLL:</label>
+                <label class="form-label">Authorization URL:</label>
                 <div class="input-group">
                     <input type="text" id="authUrl" class="form-control" readonly>
                     <button class="btn btn-outline-secondary" onclick="copyToClipboard('authUrl')">Copy</button>
@@ -148,47 +148,45 @@
             </div>
 
             <!-- Tab Content -->
-            <div id="idTokenResponse" class="tabcontent">
-              <div id="tokenContainer">
-                            <div class="alert alert-info">
-                                <p>OAuth tokens detail being loading...</p>
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
-               </div>
-               <table id="idTokenTable" class="table table-striped">
-                   <thead>
-                       <tr>
-                           <th>Claim Name</th>
-                           <th>Claim Value</th>
-                       </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
-               </table>
+            <div id="oauthContentId" style="display:none">
+                <div id="idTokenResponse" class="tabcontent">
+                   <table id="idTokenTable" class="table table-striped">
+                       <thead>
+                           <tr>
+                               <th>Claim Name</th>
+                               <th>Claim Value</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                       </tbody>
+                   </table>
+                </div>
+                <div id="accessTokenResponse" class="tabcontent">
+                   <table id="accessTokenTable" class="table table-striped">
+                       <thead>
+                           <tr>
+                               <th>Claim Name</th>
+                               <th>Claim Value</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                       </tbody>
+                   </table>
+                </div>
+                <div id="rawOAuthResponse" class="tabcontent">
+                    <pre id="rawIdTokenResponseId" class="token-value"></pre>
+                </div>
+                <div id="accessTokenOAuthResponse" class="tabcontent">
+                    <pre id="rawAccessTokenResponseId" class="token-value"></pre>
+                </div>
+                <div id="rawTokenOAuthResponse" class="tabcontent">
+                    <pre id="rawTokenOAuthResponseId" class="token-value"></pre>
+                </div>
             </div>
-            <div id="accessTokenResponse" class="tabcontent">
-               <table id="accessTokenTable" class="table table-striped">
-                   <thead>
-                       <tr>
-                           <th>Claim Name</th>
-                           <th>Claim Value</th>
-                       </tr>
-                   </thead>
-                   <tbody>
-                   </tbody>
-               </table>
-            </div>
-            <div id="rawOAuthResponse" class="tabcontent">
-                <pre id="rawIdTokenResponseId" class="token-value"></pre>
-            </div>
-            <div id="accessTokenOAuthResponse" class="tabcontent">
-                <pre id="rawAccessTokenResponseId" class="token-value"></pre>
-            </div>
-            <div id="rawTokenOAuthResponse" class="tabcontent">
-                <pre id="rawTokenOAuthResponseId" class="token-value"></pre>
-            </div>
+            <jsp:include page="page-loader.jsp">
+                <jsp:param name="loader-id" value="oauth-2" />
+                <jsp:param name="loader-message" value="OAuth Response Detail is being loading" />
+            </jsp:include>
         </div>
         <div class="d-flex gap-3">
             <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
@@ -238,24 +236,7 @@
 <script>
 
     $(document).ready(function() {
-        // Clear validation messages when user interacts with the fields
-
-     /*   $(".nav-link").on("click", function(e) {
-            e.preventDefault(); // Prevent default anchor behavior
-            $(".nav-link").removeClass("active");
-            $(this).addClass("active");
-            $(".tab-content").hide();
-            if (window.location.href.includes('/oauth/callback')) {
-                const newUrl = window.location.href.replace('/oauth/callback', '');
-                window.history.replaceState({}, document.title, newUrl);
-            }
-            const target = $(this).attr("href");
-            $(target).show();
-        }); */
-
-
          $("#redirectUri").val(window.location.origin + window.location.pathname);
-
            // Check for authorization code in URL (OAuth callback)
            const urlParams = new URLSearchParams(window.location.search);
            const authCode = urlParams.get('code');
@@ -272,9 +253,9 @@
                setSelectedScopes(formState.scopes);
                sessionStorage.removeItem('oauthFormState');
 
-               // Switch to OAuth tab
              //  $("#oauthTestTab").click();
-               showOAuthStep(2);
+               showOAuthStep(3);
+               $("#loader-content-oauth-2").show();
          }
 
          if (error) {
@@ -480,7 +461,6 @@
         $("#refreshToken").text("");
         $("#idToken").text("");
         $("#tokenDetails").text("");
-
         // Make AJAX call to token endpoint
         $.ajax({
             type: "POST",
@@ -655,7 +635,6 @@
 
         // Replace with your actual backend endpoint
         const backendApiUrl = "http://localhost:8080/api/decode-oauth-token";
-
         $.ajax({
             type: "POST",  // Typically POST for token submission
             url: backendApiUrl,
@@ -671,9 +650,9 @@
                 renderTable(backendResponse.idTokenClaimList,'#idTokenTable tbody')
                 renderTable(backendResponse.accessTokenClaimList,'#accessTokenTable tbody')
                 // Only now show Step 3 (after backend success)
-                showOAuthStep(3);
-                $("#tokenContainer").hide();
-
+                 showOAuthStep(3);
+                 $("#oauthContentId").show();
+                 $("#loader-content-oauth-2").hide();
                 // Clear URL parameters
                 if (window.history.replaceState) {
                     const cleanUrl = window.location.origin + window.location.pathname;
