@@ -645,7 +645,7 @@
                  console.log('backendResponse'+JSON.stringify(backendResponse));
                  $("#rawIdTokenResponseId").text(backendResponse.decodedIdToken)
                  $("#rawAccessTokenResponseId").text(backendResponse.decodedAccessToken)
-                 $("#rawTokenOAuthResponseId").text(JSON.stringify(tokenResponse))
+                 $("#rawTokenOAuthResponseId").text(backendResponse.rawTokenOAuthResponse)
 
                 renderTable(backendResponse.idTokenClaimList,'#idTokenTable tbody')
                 renderTable(backendResponse.accessTokenClaimList,'#accessTokenTable tbody')

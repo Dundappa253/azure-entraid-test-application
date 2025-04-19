@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XML Beautifier</title>
+
+    <!-- vkbeautify -->
+    <script src="https://cdn.jsdelivr.net/gh/vkiryukhin/vkBeautify/vkbeautify.js"></script>
+
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+        }
+        textarea {
+          width: 100%;
+          height: 150px;
+          font-family: monospace;
+        }
+        pre {
+          padding: 10px;
+          background: #f6f8fa;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          overflow: auto;
+        }
+        button {
+          padding: 8px 12px;
+          margin-top: 10px;
+          margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Beautify & Minify XML</h2>
+
+<textarea id="rawXml">
+<root><user><name>Alice</name><age>30</age></user></root>
+  </textarea>
+
+<br>
+<button onclick="beautifyXml()">Beautify</button>
+<button onclick="minifyXml()">Minify</button>
+
+<h3>Output:</h3>
+<pre><code id="outputXml"></code></pre>
+
+<script>
+    function beautifyXml() {
+      const input = document.getElementById("rawXml").value;
+      const pretty = vkbeautify.xml(input, 2); // 2-space indentation
+      document.getElementById("outputXml").textContent = pretty;
+    }
+
+    function minifyXml() {
+      const input = document.getElementById("rawXml").value;
+      const minified = vkbeautify.xmlmin(input);
+      document.getElementById("outputXml").textContent = minified;
+    }
+</script>
+
+</body>
+</html>

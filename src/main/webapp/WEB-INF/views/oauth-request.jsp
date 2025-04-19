@@ -126,43 +126,46 @@
 
     <!-- Step 3: Tokens -->
     <div id="oauthStep3-content" class="step-content">
-        <h5>Step 3: Tokens</h5>
-        <br>
-        <div class="mb-3">
-            <label class="form-label">Access Token:</label>
-            <div class="oauth-token-container">
-                <span id="accessToken"></span>
-                <span class="copy-btn" onclick="copyToClipboard('accessToken')">Copy</span>
+            <h5>Step 3: View OAuth Response</h5>
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'accessTokenResponse')">Access Token Claims</button>
+                <button class="tablinks" onclick="openTab(event, 'accessTokenOAuthResponse')">Decoded Access Token</button>
+                <button class="tablinks" onclick="openTab(event, 'rawTokenOAuthResponse')">Raw OAuth Response</button>
             </div>
-        </div>
 
-        <div class="mb-3" id="refreshTokenContainer">
-            <label class="form-label">Refresh Token:</label>
-            <div class="oauth-token-container">
-                <span id="refreshToken"></span>
-                <span class="copy-btn" onclick="copyToClipboard('refreshToken')">Copy</span>
+            <!-- Tab Content -->
+            <div id="oauthContentId">
+                <div id="accessTokenResponse" class="tabcontent">
+                   <table id="accessTokenTable" class="table table-striped">
+                       <thead>
+                           <tr>
+                               <th>Claim Name</th>
+                               <th>Claim Value</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                       </tbody>
+                   </table>
+                </div>
+                <div id="accessTokenOAuthResponse" class="tabcontent">
+                    <pre id="rawAccessTokenResponseId" class="token-value"></pre>
+                </div>
+                <div id="rawTokenOAuthResponse" class="tabcontent">
+                    <pre id="rawTokenOAuthResponseId" class="token-value"></pre>
+                </div>
             </div>
+            <jsp:include page="page-loader.jsp">
+                <jsp:param name="loader-id" value="oauth-2" />
+                <jsp:param name="loader-message" value="OAuth Response Detail is being loading" />
+            </jsp:include>
+            <div class="d-flex gap-3">
+                 <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
+                 <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
+                 <button class="btn btn-info flex-grow-1" id="refreshTokenBtn" onclick="refreshTokens()"
+                         style="display: none;">Refresh Token
+                 </button>
+         </div>
         </div>
-
-        <div class="mb-3">
-            <label class="form-label">ID Token:</label>
-            <div class="oauth-token-container">
-                <span id="idToken"></span>
-                <span class="copy-btn" onclick="copyToClipboard('idToken')">Copy</span>
-            </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Token Details:</label>
-            <pre id="tokenDetails" class="oauth-token-container"></pre>
-        </div>
-        <div class="d-flex gap-3">
-            <button class="btn btn-secondary flex-grow-1" onclick="showOAuthStep(2)">Previous</button>
-            <button class="btn btn-primary flex-grow-1" onclick="showOAuthStep(4)">Test API</button>
-            <button class="btn btn-info flex-grow-1" id="refreshTokenBtn" onclick="refreshTokens()"
-                    style="display: none;">Refresh Token
-            </button>
-        </div>
-    </div>
 
     <!-- Step 4: API Test -->
     <div id="oauthStep4-content" class="step-content">
@@ -586,10 +589,42 @@
             $("#redirectUriError").text("Redirect URI is required").show();
             isValid = false;
         }
+        if(grantType == 'client_credentials' && !$("#clientSecret").val()){
+            $("#clientSecretError").text("Client Secret is required when you select client_credential grant type").show();
+            isValid = false;
+        }
         if (isValid) {
-            generateAuthUrl().then(() => {
-                showOAuthStep(2);
-            });
+           if(grantType !== 'client_credentials') {
+                generateAuthUrl().then(() => {
+                    showOAuthStep(2);
+                });
+            } else {
+                const tokenUrl = "https://login.microsoftonline.com/"+$("#oauthTenantId").val()+"/oauth2/v2.0/token";
+                const credentials = btoa($("#clientId").val() + ':' + $("#clientSecret").val());
+                const oAuthRequest = {
+                    tenantId: $("#oauthTenantId").val(),
+                    clientId: $("#clientId").val(),  // From form input
+                    clientSecret: $("#clientSecret").val(),  // From form input
+                    scope: "https://graph.microsoft.com/.default",  // Optional
+                    grantType: 'client_credentials'
+                };
+                $.ajax({
+                        url: '/api/clientCredential-token',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(oAuthRequest),
+                        success: function(response) {
+                            $("#rawAccessTokenResponseId").text(response.decodedAccessToken)
+                            $("#rawTokenOAuthResponseId").text(response.rawTokenOAuthResponse)
+                            renderTable(response.accessTokenClaimList,'#accessTokenTable tbody')
+                            showOAuthStep(3);
+                            // Use the token...
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr.responseText);
+                        }
+                 });
+            }
         }
     }
 
@@ -646,6 +681,30 @@
                 window.history.replaceState({}, document.title, cleanUrl);
         }
     }
+
+    function renderTable(attributes,tokeTable) {
+        let rows = "";
+        attributes.forEach(item => {
+             rows += "<tr><td>"+item.name+"</td><td style='white-space'>"+item.value+"</td></tr>";
+        });
+        $(tokeTable).html(rows || '<tr><td colspan="2">No data</td></tr>');
+    }
+
+    function openTab(evt, tabName) {
+                   const tabcontent = document.getElementsByClassName("tabcontent");
+                   for (let i = 0; i < tabcontent.length; i++) {
+                       tabcontent[i].style.display = "none";
+                   }
+                   const tablinks = document.getElementsByClassName("tablinks");
+                   for (let i = 0; i < tablinks.length; i++) {
+                       tablinks[i].className = tablinks[i].className.replace(" active", "");
+                   }
+                   document.getElementById(tabName).style.display = "block";
+                   evt.currentTarget.className += " active";
+               }
+               // Open the default tab
+          document.getElementsByClassName("tablinks")[0].click();
+
 </script>
 </body>
 </html>

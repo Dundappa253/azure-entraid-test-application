@@ -81,7 +81,7 @@
             </table>
         </div>
         <div id="rawXml" class="tabcontent">
-            <div id="xmlDisplay" class="xml-display"></div>
+            <div id="xmlDisplay"></div>
         </div>
     </div>
   </div>
