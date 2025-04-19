@@ -16,4 +16,20 @@ public class JsonUtil {
             return jsonString; // Return original if invalid
         }
     }
+
+    public static String toJson(Object jsonObject) {
+        try {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonObject);
+        } catch (JsonProcessingException e) {
+            return "{}"; // Return original if invalid
+        }
+    }
+
+    public static Object toObject(String jsonString,Class objectClass) {
+        try {
+            return mapper.readValue(jsonString, objectClass);
+        } catch (JsonProcessingException e) {
+            return jsonString; // Return original if invalid
+        }
+    }
 }
